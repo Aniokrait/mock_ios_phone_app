@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -54,11 +52,11 @@ class DialPage extends ConsumerWidget {
     // 表示用は別変数にする(先頭は...で置き換えるが内部的には全桁保持しておくため)
     String dispPhoneNum = phoneNumber;
 
-    if(15 <= numlength && numlength <= 20) {
+    if (15 <= numlength && numlength <= 20) {
       // 15文字目〜20文字目まで少しづつ小さくなっていく
       // 桁数が増えるほど文字は小さくなる
       fontSize = fontSize - (14 - numlength).abs();
-    } else if(21 <= numlength) {
+    } else if (21 <= numlength) {
       // リビルド時にフォントが元の大きさに戻ってしまうので、小さいままにしておく
       fontSize = 26;
 
@@ -129,8 +127,7 @@ class DialPage extends ConsumerWidget {
 
   Container fifthRow(WidgetRef ref) {
     return Container(
-      margin:
-      const EdgeInsets.only(left: 20, top: 14, right: 20, bottom: 40),
+      margin: const EdgeInsets.only(left: 20, top: 14, right: 20, bottom: 40),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -232,13 +229,13 @@ class DialPage extends ConsumerWidget {
           Container(
             width: 15,
             height: 15,
-            margin: const EdgeInsets.only(left: 9, top: 7),
+            margin: const EdgeInsets.only(left: 19, top: 17),
             color: Colors.black87,
           ),
-          InkWell(
-            onTap: () {
+          IconButton(
+            onPressed: () {
               String phoneNum = ref.read(_phoneNumber);
-              if(phoneNum.isEmpty) {
+              if (phoneNum.isEmpty) {
                 return;
               }
               String trimmed = phoneNum.substring(0, phoneNum.length - 1);
@@ -249,9 +246,9 @@ class DialPage extends ConsumerWidget {
                 ref.read(_visibleAddNumText.notifier).state = false;
               }
             },
-            child: Icon(
-              size: 30,
+            icon: Icon(
               Icons.backspace,
+              size: 30,
               color: Colors.grey[350],
             ),
           ),
