@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 final _phoneNumber = StateProvider<String>((ref) => '');
 final _visibleAddNumText = StateProvider<bool>((ref) => false);
@@ -205,7 +207,7 @@ class DialPage extends ConsumerWidget {
   /// returns handset button
   ElevatedButton handsetButton() {
     return ElevatedButton(
-      onPressed: () => {},
+      onPressed: () => {launchUrlString("tel:$_phoneNumber")},
       style: ElevatedButton.styleFrom(
         primary: Colors.green,
         shape: const CircleBorder(),
