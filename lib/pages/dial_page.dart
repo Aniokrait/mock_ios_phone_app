@@ -32,15 +32,40 @@ class DialPage extends ConsumerWidget {
   }
 
   /// button to select a mobile carrier
-  ElevatedButton carrierButton() {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
+  Container carrierButton() {
+    return Container(
+      margin: const EdgeInsets.only(top: 10),
+      child: PopupMenuButton(
+        itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+          const PopupMenuItem(
+            height: 24,
+            textStyle: TextStyle(fontSize: 12,color: Colors.grey),
+            child: Text('使用する回線を選択してください。'),
+          ),
+          const PopupMenuDivider(height: 0,),
+          const PopupMenuItem(
+            child: Text('"楽天モバイル"を使用'),
+          ),
+          const PopupMenuDivider(height: 0,),
+          const PopupMenuItem(
+            child: Text('"povoを使用"'),
+          ),
+        ],
+        child: Container(
+          //width: 120,
+          height: 30,
+          padding: const EdgeInsets.only(left: 16, right: 16),
+          decoration: ShapeDecoration(
+            color: Colors.grey[350],
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          //縦方向も中央揃えしたいけど、CenterウィジェットとかAlignウィジェット使うとなぜか
+          //Containerが横幅いっぱいになってしまう・・・
+          child: const Text('楽天モバイル'),
         ),
       ),
-      onPressed: () => {},
-      child: const Text('楽天モバイル'),
     );
   }
 
