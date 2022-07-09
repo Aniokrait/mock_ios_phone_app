@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mock_ios_phone_app/pages/dial_page.dart';
+import 'package:mock_ios_phone_app/pages/pages.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -16,7 +16,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(),
+      //home: const MyHomePage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const MyHomePage(),
+      },
     );
   }
 }
@@ -28,11 +32,9 @@ class MyHomePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: const Text('aaa'),
       ),
-      body: DialPage(),
+      body: pages[ref.watch(tabIndex)],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         selectedFontSize: 12,
@@ -52,4 +54,5 @@ class MyHomePage extends ConsumerWidget {
   }
 }
 
-final tabIndex = StateProvider<int>((ref) => 0);
+//一旦初期値をキーパッドページに
+final tabIndex = StateProvider<int>((ref) => 3);
