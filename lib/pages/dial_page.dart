@@ -8,7 +8,7 @@ final _phoneNumber = StateProvider<String>((ref) => '');
 final _visibleAddNumText = StateProvider<bool>((ref) => false);
 
 class DialPage extends ConsumerWidget {
-  DialPage({Key? key}) : super(key: key);
+  const DialPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,19 +34,23 @@ class DialPage extends ConsumerWidget {
   /// button to select a mobile carrier
   Container carrierButton() {
     return Container(
-      margin: const EdgeInsets.only(top: 10),
+      margin: const EdgeInsets.only(top: 10, bottom: 10),
       child: PopupMenuButton(
         itemBuilder: (BuildContext context) => <PopupMenuEntry>[
           const PopupMenuItem(
             height: 24,
-            textStyle: TextStyle(fontSize: 12,color: Colors.grey),
+            textStyle: TextStyle(fontSize: 12, color: Colors.grey),
             child: Text('使用する回線を選択してください。'),
           ),
-          const PopupMenuDivider(height: 0,),
+          const PopupMenuDivider(
+            height: 0,
+          ),
           const PopupMenuItem(
             child: Text('"楽天モバイル"を使用'),
           ),
-          const PopupMenuDivider(height: 0,),
+          const PopupMenuDivider(
+            height: 0,
+          ),
           const PopupMenuItem(
             child: Text('"povoを使用"'),
           ),
@@ -99,12 +103,34 @@ class DialPage extends ConsumerWidget {
   }
 
   /// button to add phone number to contacts
-  TextButton addToContactsButton() {
-    return TextButton(
-      onPressed: () => {},
-      child: const Text(
-        '番号を追加',
-        style: TextStyle(fontSize: 14),
+  Container addToContactsButton() {
+    return Container(
+      margin: const EdgeInsets.only(top: 10),
+      child: PopupMenuButton(
+        itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+          PopupMenuItem(
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+              title: const Text('新規連絡先を作成'),
+              trailing: const Icon(Icons.contacts),
+              onTap: () => {Navigator.pushNamed(context, 'new-contact',)},
+            ),
+          ),
+          const PopupMenuDivider(
+            height: 0,
+          ),
+          const PopupMenuItem(
+            child: ListTile(
+              contentPadding: EdgeInsets.symmetric(horizontal: 0),
+              title: Text('既存の連絡先に追加'),
+              trailing: Icon(Icons.contacts),
+            ),
+          ),
+        ],
+        child: const Text(
+          '番号を追加',
+          style: TextStyle(fontSize: 14, color: Colors.blue),
+        ),
       ),
     );
   }

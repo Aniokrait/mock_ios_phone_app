@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mock_ios_phone_app/pages/new_contact_page.dart';
 import 'package:mock_ios_phone_app/pages/pages.dart';
 
 void main() {
@@ -18,6 +19,15 @@ class MyApp extends StatelessWidget {
       ),
       //home: const MyHomePage(),
       initialRoute: '/',
+      onGenerateRoute: (RouteSettings settings) {
+        switch (settings.name) {
+          case 'new-contact':
+            return MaterialPageRoute(
+              builder: (context) => const NewContactPage(),
+              fullscreenDialog: true,
+            );
+        }
+      },
       routes: {
         '/': (context) => const MyHomePage(),
       },
