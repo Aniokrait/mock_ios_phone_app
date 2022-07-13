@@ -16,7 +16,7 @@ import 'package:mock_ios_phone_app/data/data_type.dart';
 //   }
 // }
 
-abstract class AbstStateNotifier<T extends List> extends StateNotifier<List> {
+abstract class AbstStateNotifier<V extends DataType> extends StateNotifier<List<V>> {
   // TODO ここでsuper()にどうやってサブクラスの引数を与えるか考える
   AbstStateNotifier(Function init) : super(init());
 
@@ -24,7 +24,7 @@ abstract class AbstStateNotifier<T extends List> extends StateNotifier<List> {
     return state.length;
   }
 
-  void add(DataType data) {
+  void add(V data) {
     state = [...state, data];
   }
 }

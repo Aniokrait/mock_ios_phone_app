@@ -17,7 +17,7 @@ class NumberOfPhoneType extends DataType{
 //class PhoneTypeNotifier extends StateNotifier<List<NumberOfPhoneType>> {
 // TODO ここで<List<NumberOfPhoneType>>ではなく、<NumberOfPhoneType>を指定する
 //class PhoneTypeNotifier extends AbstStateNotifier<NumberOfPhoneType> {
-class PhoneTypeNotifier<V> extends AbstStateNotifier<List<NumberOfPhoneType>> {
+class PhoneTypeNotifier extends AbstStateNotifier<NumberOfPhoneType> {
   PhoneTypeNotifier() : super(init);
 
   // int length(){
@@ -64,6 +64,6 @@ extension PhoneTypeExt on PhoneType {
 }
 
 final phoneTypesProvider =
-    StateNotifierProvider<PhoneTypeNotifier, List>((ref) {
+    StateNotifierProvider<PhoneTypeNotifier, List<NumberOfPhoneType>>((ref) {
   return PhoneTypeNotifier();
 });
