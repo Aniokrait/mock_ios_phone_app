@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'border.dart';
+import 'design_rules.dart';
 
 class DecoratedContainer extends StatelessWidget {
   const DecoratedContainer({Key? key, this.child}) : super(key: key);

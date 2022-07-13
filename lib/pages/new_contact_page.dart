@@ -1,48 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mock_ios_phone_app/pages/widgets/add_line_row.dart';
 import 'package:mock_ios_phone_app/pages/widgets/border.dart';
+import 'package:mock_ios_phone_app/pages/widgets/custom_appbar.dart';
 import 'package:mock_ios_phone_app/pages/widgets/decorated_container.dart';
+import 'package:mock_ios_phone_app/pages/widgets/decorated_text_form_field.dart';
+import 'package:mock_ios_phone_app/pages/widgets/design_rules.dart';
 
 import '../data/phone_type.dart';
-
-const lineColor = Colors.black12;
-const double itemHeight = 44;
 
 class NewContactPage extends ConsumerWidget {
   const NewContactPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      appBar: AppBar(
-        leadingWidth: 100,
-        leading: TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: const Text(
-            'キャンセル',
-            style: TextStyle(fontSize: 16, color: Colors.white),
-          ),
-        ),
-        title: const Text('新規連絡先'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text(
-              'OK',
-              style: TextStyle(fontSize: 16, color: Colors.white),
-            ),
-          ),
-        ],
+    return const Scaffold(
+      appBar: CustomAppBar(
+        leadingText: 'キャンセル',
+        mainTitle: '新規連絡先',
+        trailingText: 'OK',
       ),
-      body: ContactForm(ref),
+      body: _ContactForm(),
     );
   }
+}
 
-  SingleChildScrollView ContactForm(WidgetRef ref) {
+class _ContactForm extends ConsumerWidget {
+  const _ContactForm({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -52,85 +39,18 @@ class NewContactPage extends ConsumerWidget {
           ),
           Form(
             child: Column(
-              children: [
+              children: const [
                 //基本情報ブロック
-                DecoratedContainer(
-                  child: Column(
-                    children: const [
-                      DecoratedTextFormField('姓'),
-                      DecoratedTextFormField('姓（フリガナ）'),
-                      DecoratedTextFormField('名'),
-                      DecoratedTextFormField('名（フリガナ）'),
-                      DecoratedTextFormField('会社名'),
-                      DecoratedTextFormField(
-                        '会社名（フリガナ）',
-                        isLast: true,
-                      ),
-                    ],
-                  ),
-                ),
-                //回線
-                const SizedBox(
+                _BasicInfosField(),
+                SizedBox(
                   height: itemHeight,
                 ),
-                DecoratedContainer(
-                  child: SizedBox(
-                    height: itemHeight,
-                    child: Row(
-                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text('優先する回線'),
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 12),
-                          child: const Text('デフォルトー”楽天モバイル”'),
-                        ),
-                        const Spacer(),
-                        const Icon(
-                          Icons.chevron_right,
-                          color: Colors.black45,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(
+                //優先する回線
+                _CarrierField(),
+                SizedBox(
                   height: itemHeight,
                 ),
-                // 電話番号
-                DecoratedContainer(
-                  child: Column(
-                    children: [
-                      //stateの数だけforで回す
-                      for (var phoneType in ref.watch(phoneTypesProvider)) ...{
-                        SizedBox(
-                          height: itemHeight,
-                          child: Row(
-                            children: [
-                              const Icon(Icons.remove_circle, color: Colors.red,),
-                              Text(phoneType.type),
-                              const Icon(Icons.chevron_right),
-                              Text(phoneType.number),
-                            ],
-                          ),
-                        ),
-                      },
-                      //forの外で電話を追加の行を生成する。
-
-                      SizedBox(
-                        height: itemHeight,
-                        child: Row(
-                          children: const [
-                            Icon(
-                              Icons.add_circle,
-                              color: Colors.lightGreen,
-                            ),
-                            Text('電話を追加'),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                )
+                _PhoneNumbersField(),
                 // メール
 
                 // 着信音
@@ -163,24 +83,123 @@ class NewContactPage extends ConsumerWidget {
   }
 }
 
-class DecoratedTextFormField extends StatelessWidget {
-  const DecoratedTextFormField(this.title, {Key? key, this.isLast = false})
-      : super(key: key);
-
-  final String title;
-  final bool isLast;
+/// 姓名等基本情報のフィールド
+class _BasicInfosField extends StatelessWidget {
+  const _BasicInfosField({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: itemHeight,
-      child: TextFormField(
-        decoration: InputDecoration(
-          hintText: title,
-          // 最後の要素はTextFieldの下線とContainerの下線が被るので消す。
-          enabledBorder: isLast ? InputBorder.none : underBorder,
-          focusedBorder: isLast ? InputBorder.none : underBorder,
+    return DecoratedContainer(
+      child: Column(
+        children: const [
+          DecoratedTextFormField('姓'),
+          DecoratedTextFormField('姓（フリガナ）'),
+          DecoratedTextFormField('名'),
+          DecoratedTextFormField('名（フリガナ）'),
+          DecoratedTextFormField('会社名'),
+          DecoratedTextFormField(
+            '会社名（フリガナ）',
+            isLast: true,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 優先する回線のフィールド
+class _CarrierField extends StatelessWidget {
+  const _CarrierField({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedContainer(
+      child: SizedBox(
+        height: itemHeight,
+        child: Row(
+          //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('優先する回線'),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 12),
+              child: const Text('デフォルトー”楽天モバイル”'),
+            ),
+            const Spacer(),
+            const Icon(
+              Icons.chevron_right,
+              color: Colors.black45,
+            ),
+          ],
         ),
+      ),
+    );
+  }
+}
+
+class _PhoneNumbersField extends ConsumerWidget {
+  const _PhoneNumbersField({Key? key}) : super(key: key);
+
+  void addLine(Reader read) {
+    var currentPhoneNums = read(phoneTypesProvider.notifier);
+    var phoneTypeEnums = PhoneType.values;
+
+    // 電話のタイプ 各種タイプより多い数が追加された場合は「携帯電話」を追加する
+    String targetType = PhoneType.cell.name;
+    if (currentPhoneNums.length() < phoneTypeEnums.length) {
+      targetType = phoneTypeEnums[currentPhoneNums.length()].name;
+    }
+    // TODO ナンバーを前画面から持ってきて設定する
+    currentPhoneNums
+        .add(NumberOfPhoneType(type: targetType, number: '###'));
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return DecoratedContainer(
+      child: Column(
+        children: [
+          //stateの数だけforで回す
+          for (var phoneType in ref.watch(phoneTypesProvider)) ...{
+            Container(
+              decoration: const BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: lineColor),
+                ),
+              ),
+              child: SizedBox(
+                height: itemHeight,
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.remove_circle,
+                      color: Colors.red,
+                    ),
+                    Text(phoneType.type),
+                    const Icon(Icons.chevron_right),
+                    Text(phoneType.number),
+                  ],
+                ),
+              ),
+            ),
+          },
+          //電話を追加行
+          InkWell(
+            onTap: () => addLine(ref.read),
+            child: SizedBox(
+              height: itemHeight,
+              child: Row(
+                children: const [
+                  Icon(
+                    Icons.add_circle,
+                    color: Colors.lightGreen,
+                  ),
+                  Text('電話を追加'),
+                ],
+              ),
+            ),
+          ),
+          AddLineRow(title: 'title', provider: phoneTypesProvider, labelValues: PhoneType.values),
+        ],
       ),
     );
   }

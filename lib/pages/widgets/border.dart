@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-const lineColor = Colors.black12;
+import 'design_rules.dart';
+
+
 const underBorder = UnderlineInputBorder(
   borderSide: BorderSide(color: lineColor),
 );

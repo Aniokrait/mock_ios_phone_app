@@ -1,21 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mock_ios_phone_app/data/data_type.dart';
 import 'package:mock_ios_phone_app/pages/widgets/decorated_container.dart';
 
+import '../pages/widgets/add_line_row.dart';
+import 'abst_state_notifier.dart';
+
 @immutable
-class NumberOfPhoneType {
-  const NumberOfPhoneType({required this.type, required this.number});
+class NumberOfPhoneType extends DataType{
+  NumberOfPhoneType({required this.type, required this.number});
 
   final String type;
   final String number;
 }
 
-class PhoneTypeNotifier extends StateNotifier<List<NumberOfPhoneType>> {
-  PhoneTypeNotifier() : super(init());
+//class PhoneTypeNotifier extends StateNotifier<List<NumberOfPhoneType>> {
+// TODO ここで<List<NumberOfPhoneType>>ではなく、<NumberOfPhoneType>を指定する
+//class PhoneTypeNotifier extends AbstStateNotifier<NumberOfPhoneType> {
+class PhoneTypeNotifier<V> extends AbstStateNotifier<List<NumberOfPhoneType>> {
+  PhoneTypeNotifier() : super(init);
 
-  void addPhoneType(NumberOfPhoneType phoneType) {
-    state.insert(state.length - 2, phoneType);
-  }
+  // int length(){
+  //   return state.length;
+  // }
+  //
+  // void add(NumberOfPhoneType numberOfPhoneType) {
+  //   //state.add(numberOfPhoneType);
+  //   state = [...state, numberOfPhoneType];
+  // }
 }
 
 List<NumberOfPhoneType> init() {
@@ -52,6 +64,6 @@ extension PhoneTypeExt on PhoneType {
 }
 
 final phoneTypesProvider =
-    StateNotifierProvider<PhoneTypeNotifier, List<NumberOfPhoneType>>((ref) {
+    StateNotifierProvider<PhoneTypeNotifier, List>((ref) {
   return PhoneTypeNotifier();
 });
