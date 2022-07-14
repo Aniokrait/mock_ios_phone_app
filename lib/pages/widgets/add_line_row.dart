@@ -20,7 +20,7 @@ class AddLineRow<E extends Enum> extends ConsumerWidget {
       targetType = labelValues[currentRows.length()].name;
     }
     // TODO ナンバーを前画面から持ってきて設定する
-    currentRows.add(NumberOfPhoneType(type: targetType));
+    currentRows.add(NumberOfPhoneType(type: targetType, value: ''));
   }
 
   @override

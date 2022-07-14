@@ -145,20 +145,6 @@ class _CarrierField extends StatelessWidget {
 class _PhoneNumbersField extends ConsumerWidget {
   const _PhoneNumbersField({Key? key}) : super(key: key);
 
-  void addLine(Reader read) {
-    var currentPhoneNums = read(phoneTypesProvider.notifier);
-    var phoneTypeEnums = PhoneType.values;
-
-    // 電話のタイプ 各種タイプより多い数が追加された場合は「携帯電話」を追加する
-    String targetType = PhoneType.cell.name;
-    if (currentPhoneNums.length() < phoneTypeEnums.length) {
-      targetType = phoneTypeEnums[currentPhoneNums.length()].name;
-    }
-    // TODO ナンバーを前画面から持ってきて設定する
-    currentPhoneNums
-        .add(NumberOfPhoneType(type: targetType));
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return DecoratedContainer(
