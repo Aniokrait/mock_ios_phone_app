@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mock_ios_phone_app/pages/dial_page.dart';
 import 'package:mock_ios_phone_app/pages/widgets/add_line_row.dart';
 import 'package:mock_ios_phone_app/pages/widgets/border.dart';
 import 'package:mock_ios_phone_app/pages/widgets/custom_appbar.dart';
@@ -10,7 +11,12 @@ import 'package:mock_ios_phone_app/pages/widgets/design_rules.dart';
 import '../data/phone_type.dart';
 
 class NewContactPage extends ConsumerWidget {
-  const NewContactPage({Key? key}) : super(key: key);
+  const NewContactPage({Key? key,}) : super(key: key);
+
+  @override
+  void initState() {
+
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -150,7 +156,7 @@ class _PhoneNumbersField extends ConsumerWidget {
     }
     // TODO ナンバーを前画面から持ってきて設定する
     currentPhoneNums
-        .add(NumberOfPhoneType(type: targetType, number: '###'));
+        .add(NumberOfPhoneType(type: targetType));
   }
 
   @override
@@ -176,29 +182,14 @@ class _PhoneNumbersField extends ConsumerWidget {
                     ),
                     Text(phoneType.type),
                     const Icon(Icons.chevron_right),
-                    Text(phoneType.number),
+                    Text(phoneType.value!),
                   ],
                 ),
               ),
             ),
           },
           //電話を追加行
-          InkWell(
-            onTap: () => addLine(ref.read),
-            child: SizedBox(
-              height: itemHeight,
-              child: Row(
-                children: const [
-                  Icon(
-                    Icons.add_circle,
-                    color: Colors.lightGreen,
-                  ),
-                  Text('電話を追加'),
-                ],
-              ),
-            ),
-          ),
-          AddLineRow(title: 'title', provider: phoneTypesProvider, labelValues: PhoneType.values),
+          AddLineRow(title: '電話を追加', provider: phoneTypesProvider, labelValues: PhoneType.values),
         ],
       ),
     );

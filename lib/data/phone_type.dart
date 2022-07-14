@@ -1,37 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mock_ios_phone_app/data/data_type.dart';
-import 'package:mock_ios_phone_app/pages/widgets/decorated_container.dart';
-
-import '../pages/widgets/add_line_row.dart';
+import 'package:mock_ios_phone_app/pages/dial_page.dart';
 import 'abst_state_notifier.dart';
 
-@immutable
-class NumberOfPhoneType extends DataType{
-  NumberOfPhoneType({required this.type, required this.number});
+//@immutable
+class NumberOfPhoneType extends DataType {
+  NumberOfPhoneType({required this.type});
 
   final String type;
-  final String number;
+  late String? value = '';
 }
 
-//class PhoneTypeNotifier extends StateNotifier<List<NumberOfPhoneType>> {
-// TODO ここで<List<NumberOfPhoneType>>ではなく、<NumberOfPhoneType>を指定する
-//class PhoneTypeNotifier extends AbstStateNotifier<NumberOfPhoneType> {
+// ここで<List<NumberOfPhoneType>>ではなく、<NumberOfPhoneType>を指定する
 class PhoneTypeNotifier extends AbstStateNotifier<NumberOfPhoneType> {
   PhoneTypeNotifier() : super(init);
 
-  // int length(){
-  //   return state.length;
-  // }
-  //
-  // void add(NumberOfPhoneType numberOfPhoneType) {
-  //   //state.add(numberOfPhoneType);
-  //   state = [...state, numberOfPhoneType];
-  // }
+  //StateNotifierProviderインスタンス生成時に呼ばれる。
+  void changeFirstValue(String value) {
+    state[0].value = value;
+  }
 }
 
 List<NumberOfPhoneType> init() {
-  return [NumberOfPhoneType(type: PhoneType.cell.name, number: '1')];
+  // StateNotifierインスタンス生成時はvalueにnullを代入し、StateNotifierProvider
+  // インスタンス生成時にダイアルパッドの番号を代入する。
+  return [NumberOfPhoneType(type: PhoneType.cell.name)];
 }
 
 enum PhoneType {
@@ -65,5 +59,8 @@ extension PhoneTypeExt on PhoneType {
 
 final phoneTypesProvider =
     StateNotifierProvider<PhoneTypeNotifier, List<NumberOfPhoneType>>((ref) {
-  return PhoneTypeNotifier();
+  var phoneTypeNotifier = PhoneTypeNotifier();
+  phoneTypeNotifier.changeFirstValue(ref.watch(inputPhoneNumber));
+  return phoneTypeNotifier;
 });
+

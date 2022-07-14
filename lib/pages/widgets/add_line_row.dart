@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mock_ios_phone_app/data/data_type.dart';
-
 import '../../data/abst_state_notifier.dart';
 import '../../data/phone_type.dart';
 import 'design_rules.dart';
@@ -15,7 +13,6 @@ class AddLineRow<E extends Enum> extends ConsumerWidget {
 
   void addLine<T>(Reader read) {
     var currentRows = read(provider.notifier);
-    //var phoneTypeEnums = PhoneType.values;
 
     // 各種タイプより多い数が追加された場合は規定のフィールドを追加する
     String targetType = PhoneType.cell.name;
@@ -23,15 +20,7 @@ class AddLineRow<E extends Enum> extends ConsumerWidget {
       targetType = labelValues[currentRows.length()].name;
     }
     // TODO ナンバーを前画面から持ってきて設定する
-    currentRows.add(NumberOfPhoneType(type: targetType, number: '###'));
-
-    // String label = '';
-    // var values = PhoneType.values;
-    // values[0];
-    // if (currentRows.length() < values.length) {
-    //   label = values[currentRows.length() - 2].name;
-    // }
-
+    currentRows.add(NumberOfPhoneType(type: targetType));
   }
 
   @override
