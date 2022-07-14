@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mock_ios_phone_app/data/data_type.dart';
 import 'package:mock_ios_phone_app/pages/dial_page.dart';
 import 'abst_state_notifier.dart';
+import 'package:collection/collection.dart';
 
 @immutable
 class NumberOfPhoneType extends DataType {
@@ -14,7 +15,40 @@ class NumberOfPhoneType extends DataType {
 
 // ここで<List<NumberOfPhoneType>>ではなく、<NumberOfPhoneType>を指定する
 class PhoneTypeNotifier extends AbstStateNotifier<NumberOfPhoneType> {
-  PhoneTypeNotifier(String inputValue) : super(NumberOfPhoneType(type: PhoneType.cell.name, value: inputValue));
+  PhoneTypeNotifier(String inputValue)
+      : super(NumberOfPhoneType(type: PhoneType.cell.name, value: inputValue));
+
+  // void hoge(int target) {
+  //   List<NumberOfPhoneType> aa = [];
+  //   state.asMap().forEach((index, value) {
+  //     aa = [...aa,
+  //       if(index != target)
+  //         value,
+  //       ];
+  //   });
+  //   state = aa;
+  // }
+
+  void removeAt(int target) {
+    List<NumberOfPhoneType> result = [];
+    state.forEachIndexed((index, element) {
+      result = [...result,
+        if(index != target)
+          element,
+      ];
+    });
+    state = result;
+  }
+
+  // void removeAt(int target) {
+  //   List<NumberOfPhoneType> result = [];
+  //   for (var i = 0; i < state.length; i++) {
+  //     if (i != target) {
+  //       result.add(state[i]);
+  //     }
+  //   }
+  //   state = result;
+  // }
 }
 
 enum PhoneType {
@@ -50,4 +84,3 @@ final phoneTypesProvider =
     StateNotifierProvider<PhoneTypeNotifier, List<NumberOfPhoneType>>((ref) {
   return PhoneTypeNotifier(ref.watch(inputPhoneNumber));
 });
-

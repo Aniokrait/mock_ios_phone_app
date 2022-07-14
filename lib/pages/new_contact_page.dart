@@ -1,22 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mock_ios_phone_app/pages/dial_page.dart';
 import 'package:mock_ios_phone_app/pages/widgets/add_line_row.dart';
-import 'package:mock_ios_phone_app/pages/widgets/border.dart';
 import 'package:mock_ios_phone_app/pages/widgets/custom_appbar.dart';
 import 'package:mock_ios_phone_app/pages/widgets/decorated_container.dart';
 import 'package:mock_ios_phone_app/pages/widgets/decorated_text_form_field.dart';
 import 'package:mock_ios_phone_app/pages/widgets/design_rules.dart';
+import 'package:collection/collection.dart';
 
 import '../data/phone_type.dart';
 
 class NewContactPage extends ConsumerWidget {
-  const NewContactPage({Key? key,}) : super(key: key);
-
-  @override
-  void initState() {
-
-  }
+  const NewContactPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -147,12 +141,10 @@ class _PhoneNumbersField extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return DecoratedContainer(
-      child: Column(
-        children: [
-          //stateの数だけforで回す
-          for (var phoneType in ref.watch(phoneTypesProvider)) ...{
-            Container(
+    /////////////////////////////////////////
+    List<Widget> inputFields = ref
+        .watch(phoneTypesProvider)
+        .mapIndexed((index, element) => Container(
               decoration: const BoxDecoration(
                 border: Border(
                   bottom: BorderSide(color: lineColor),
@@ -162,20 +154,71 @@ class _PhoneNumbersField extends ConsumerWidget {
                 height: itemHeight,
                 child: Row(
                   children: [
-                    const Icon(
-                      Icons.remove_circle,
-                      color: Colors.red,
+                    IconButton(
+                      icon: const Icon(
+                        Icons.remove_circle,
+                        color: Colors.red,
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 0,
+                        minHeight: kMinInteractiveDimension,
+                      ),
+                      padding: const EdgeInsets.only(left: 0),
+                      onPressed: () {
+                        ref.read(phoneTypesProvider.notifier).removeAt(index);
+                      },
                     ),
-                    Text(phoneType.type),
+                    Text(element.type),
                     const Icon(Icons.chevron_right),
-                    Text(phoneType.value!),
+                    Text(element.value),
                   ],
                 ),
               ),
-            ),
-          },
+            ))
+        .toList();
+    /////////////////////////////////////////
+
+    return DecoratedContainer(
+      child: Column(
+        children: [
+          ...inputFields,
+          // //stateの数だけforで回す
+          // for (var phoneType in ref.watch(phoneTypesProvider)) ...{
+          //   Container(
+          //     decoration: const BoxDecoration(
+          //       border: Border(
+          //         bottom: BorderSide(color: lineColor),
+          //       ),
+          //     ),
+          //     child: SizedBox(
+          //       height: itemHeight,
+          //       child: Row(
+          //         children: [
+          //           IconButton(
+          //             icon: const Icon(
+          //               Icons.remove_circle,
+          //               color: Colors.red,
+          //             ),
+          //             constraints: const BoxConstraints(
+          //               minWidth: 0,
+          //               minHeight: kMinInteractiveDimension,
+          //             ),
+          //             padding: const EdgeInsets.only(left: 0),
+          //             onPressed: () {},
+          //           ),
+          //           Text(phoneType.type),
+          //           const Icon(Icons.chevron_right),
+          //           Text(phoneType.value!),
+          //         ],
+          //       ),
+          //     ),
+          //   ),
+          // },
           //電話を追加行
-          AddLineRow(title: '電話を追加', provider: phoneTypesProvider, labelValues: PhoneType.values),
+          AddLineRow(
+              title: '電話を追加',
+              provider: phoneTypesProvider,
+              labelValues: PhoneType.values),
         ],
       ),
     );
