@@ -17,7 +17,7 @@ class AddLineRow<E extends Enum> extends ConsumerWidget {
     // 各種タイプより多い数が追加された場合は規定のフィールドを追加する
     String targetType = PhoneType.cell.name;
     if (currentRows.length() < labelValues.length) {
-      targetType = labelValues[currentRows.length()].name;
+      targetType = (labelValues[currentRows.length()] as PhoneType).name;
     }
     // TODO ナンバーを前画面から持ってきて設定する
     currentRows.add(NumberOfPhoneType(type: targetType, value: ''));
