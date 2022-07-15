@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mock_ios_phone_app/data/contact_item.dart';
 import 'package:mock_ios_phone_app/pages/widgets/add_line_row.dart';
 import 'package:mock_ios_phone_app/pages/widgets/custom_appbar.dart';
 import 'package:mock_ios_phone_app/pages/widgets/decorated_container.dart';
@@ -168,7 +169,7 @@ class _PhoneNumbersField extends ConsumerWidget {
                         ref.read(phoneTypesProvider.notifier).removeAt(index);
                       },
                     ),
-                    Text(element.type),
+                    Text(element.type.name),
                     const Icon(Icons.chevron_right),
                     Text(element.value),
                   ],
@@ -216,9 +217,11 @@ class _PhoneNumbersField extends ConsumerWidget {
           // },
           //電話を追加行
           AddLineRow(
-              title: '電話を追加',
-              provider: phoneTypesProvider,
-              labelValues: PhoneType.values),
+            title: '電話を追加',
+            provider: phoneTypesProvider,
+            labelValues: PhoneType.values,
+            contactItem: ContactItem.phone,
+          ),
         ],
       ),
     );

@@ -1,26 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mock_ios_phone_app/data/contact_item.dart';
+import 'package:mock_ios_phone_app/data/data_type.dart';
 import '../../data/abst_state_notifier.dart';
 import '../../data/phone_type.dart';
 import 'design_rules.dart';
 
 class AddLineRow<E extends Enum> extends ConsumerWidget {
-  const AddLineRow({Key? key, required this.title, required this.provider, required this.labelValues}) : super(key: key);
+  const AddLineRow(
+      {Key? key,
+      required this.title,
+      required this.provider,
+      required this.labelValues,
+      required this.contactItem})
+      : super(key: key);
 
   final String title;
   final StateNotifierProvider<AbstStateNotifier, List> provider;
   final List<E> labelValues;
+  final ContactItem contactItem;
 
   void addLine<T>(Reader read) {
     var currentRows = read(provider.notifier);
 
-    // 各種タイプより多い数が追加された場合は規定のフィールドを追加する
-    String targetType = PhoneType.cell.name;
-    if (currentRows.length() < labelValues.length) {
-      targetType = (labelValues[currentRows.length()] as PhoneType).name;
+    // Enumを走査し、まだ追加されていないタイプを追加する
+    bool isAdded = false;
+    for (E e in labelValues) {
+      if (currentRows.contains(e)) {
+        continue;
+      } else {
+        currentRows.add(createDataType(e));
+        isAdded = true;
+        break;
+      }
     }
-    // TODO ナンバーを前画面から持ってきて設定する
-    currentRows.add(NumberOfPhoneType(type: targetType, value: ''));
+
+    // すべてのタイプがすでに追加されている場合は、Enumの１番目のタイプを追加する
+    if (!isAdded) {
+      currentRows.add(createDataType(labelValues[0]));
+    }
+  }
+
+  DataType createDataType(E targetType) {
+    switch (contactItem) {
+      case ContactItem.phone:
+        return NumberOfPhoneType(type: targetType as PhoneType, value: '');
+      default:
+        throw UnimplementedError();
+    }
   }
 
   @override
@@ -42,4 +69,3 @@ class AddLineRow<E extends Enum> extends ConsumerWidget {
     );
   }
 }
-

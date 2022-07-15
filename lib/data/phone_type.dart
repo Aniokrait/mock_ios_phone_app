@@ -9,14 +9,14 @@ import 'package:collection/collection.dart';
 class NumberOfPhoneType extends DataType {
   NumberOfPhoneType({required this.type, required this.value});
 
-  final String type;
+  final PhoneType type;
   final String value;
 }
 
 // ここで<List<NumberOfPhoneType>>ではなく、<NumberOfPhoneType>を指定する
 class PhoneTypeNotifier extends AbstStateNotifier<NumberOfPhoneType> {
   PhoneTypeNotifier(String inputValue)
-      : super(NumberOfPhoneType(type: PhoneType.cell.name, value: inputValue));
+      : super(NumberOfPhoneType(type: PhoneType.cell, value: inputValue));
 
   // void hoge(int target) {
   //   List<NumberOfPhoneType> aa = [];
@@ -38,6 +38,18 @@ class PhoneTypeNotifier extends AbstStateNotifier<NumberOfPhoneType> {
       ];
     });
     state = result;
+  }
+
+  @override
+  bool contains<E extends Enum>(E e) {
+    bool isContain = false;
+    for (NumberOfPhoneType numberOfPhoneType in state) {
+      if(numberOfPhoneType.type == e) {
+        isContain = true;
+        break;
+      }
+    }
+    return isContain;
   }
 
   // void removeAt(int target) {
