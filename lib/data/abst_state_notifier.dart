@@ -5,7 +5,7 @@ import 'package:collection/collection.dart';
 // AbstStateNotifierのgeneicsにはListは必要ない。StateNotifierの方でList<T>と定義する
 abstract class AbstStateNotifier<V extends DataType> extends StateNotifier<List<V>> {
   // サブクラスで定義した関数をスーパークラスに渡す
-  AbstStateNotifier(V initialV) : super([initialV]);
+  AbstStateNotifier(V? initialV) : super(initialV != null ? [initialV] : []);
 
   int length(){
     return state.length;

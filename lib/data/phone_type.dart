@@ -15,8 +15,8 @@ class NumberOfPhoneType extends DataType {
 
 // ここで<List<NumberOfPhoneType>>ではなく、<NumberOfPhoneType>を指定する
 class PhoneTypeNotifier extends AbstStateNotifier<NumberOfPhoneType> {
-  PhoneTypeNotifier(String inputValue)
-      : super(NumberOfPhoneType(type: PhoneType.cell, value: inputValue));
+  PhoneTypeNotifier(String? inputValue)
+      : super(NumberOfPhoneType(type: PhoneType.cell, value: inputValue!));
 
   // void hoge(int target) {
   //   List<NumberOfPhoneType> aa = [];
@@ -43,8 +43,8 @@ class PhoneTypeNotifier extends AbstStateNotifier<NumberOfPhoneType> {
   @override
   bool contains<E extends Enum>(E e) {
     bool isContain = false;
-    for (NumberOfPhoneType numberOfPhoneType in state) {
-      if(numberOfPhoneType.type == e) {
+    for (NumberOfPhoneType? numberOfPhoneType in state) {
+      if(numberOfPhoneType?.type == e) {
         isContain = true;
         break;
       }

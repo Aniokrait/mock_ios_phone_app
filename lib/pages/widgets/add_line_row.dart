@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mock_ios_phone_app/data/contact_item.dart';
 import 'package:mock_ios_phone_app/data/data_type.dart';
+import 'package:mock_ios_phone_app/data/email_type.dart';
 import '../../data/abst_state_notifier.dart';
 import '../../data/phone_type.dart';
 import '../new_contact_page.dart';
@@ -43,13 +44,15 @@ class AddLineRow<E extends Enum> extends ConsumerWidget {
       currentRows.add(createDataType(labelValues[0]));
     }
 
-    read(phoneNumbersTextEditControllers.notifier).state.add(TextEditingController());
+    read(textEditControllers.notifier).state.add(TextEditingController());
   }
 
   DataType createDataType(E targetType) {
     switch (contactItem) {
       case ContactItem.phone:
         return NumberOfPhoneType(type: targetType as PhoneType, value: '');
+      case ContactItem.email:
+        return AddressOfEmailType(type: targetType as EmailType, value: '');
       default:
         throw UnimplementedError();
     }

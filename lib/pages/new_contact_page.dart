@@ -8,6 +8,7 @@ import 'package:mock_ios_phone_app/pages/widgets/decorated_text_form_field.dart'
 import 'package:mock_ios_phone_app/pages/widgets/design_rules.dart';
 import 'package:collection/collection.dart';
 
+import '../data/email_type.dart';
 import '../data/phone_type.dart';
 import 'dial_page.dart';
 
@@ -54,7 +55,7 @@ class _ContactForm extends ConsumerWidget {
                 ),
                 _PhoneNumbersField(),
                 // メール
-
+                _EmailField(),
                 // 着信音
 
                 // メッセージ
@@ -168,7 +169,9 @@ class _PhoneNumbersField extends ConsumerWidget {
                       padding: const EdgeInsets.only(left: 0),
                       onPressed: () {
                         ref.read(phoneTypesProvider.notifier).removeAt(index);
-                        ref.read(phoneNumbersTextEditControllers).removeAt(index);
+                        ref
+                            .read(phoneNumbersTextEditControllers)
+                            .removeAt(index);
                       },
                     ),
                     Text(element.type.name),
@@ -176,8 +179,10 @@ class _PhoneNumbersField extends ConsumerWidget {
                     Expanded(
                       child: TextFormField(
                         keyboardType: TextInputType.phone,
-                        decoration: const InputDecoration(border: InputBorder.none),
-                        controller: ref.watch(phoneNumbersTextEditControllers)[index],
+                        decoration:
+                            const InputDecoration(border: InputBorder.none),
+                        controller:
+                            ref.watch(phoneNumbersTextEditControllers)[index],
                       ),
                     ),
                     //Text(element.value),
@@ -238,4 +243,78 @@ class _PhoneNumbersField extends ConsumerWidget {
   }
 }
 
-final phoneNumbersTextEditControllers = StateProvider.autoDispose<List<TextEditingController>>((ref) => [TextEditingController(text: ref.read(inputPhoneNumber))]);
+class _EmailField extends ConsumerWidget {
+  const _EmailField({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    List<Widget> inputFields = ref
+        .watch(emailTypesProvider)
+        .mapIndexed(
+          (index, element) => Container(
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: lineColor),
+              ),
+            ),
+            child: SizedBox(
+              height: itemHeight,
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.remove_circle,
+                      color: Colors.red,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 0,
+                      minHeight: kMinInteractiveDimension,
+                    ),
+                    padding: const EdgeInsets.only(left: 0),
+                    onPressed: () {
+                      ref.read(emailTypesProvider.notifier).removeAt(index);
+                      ref.read(emailTextEditControllers).removeAt(index);
+                    },
+                  ),
+                  Text(element.type.name),
+                  const Icon(Icons.chevron_right),
+                  Expanded(
+                    child: TextFormField(
+                      keyboardType: TextInputType.phone,
+                      decoration:
+                          const InputDecoration(border: InputBorder.none),
+                      controller: ref.watch(emailTextEditControllers)[index],
+                    ),
+                  ),
+                  //Text(element.value),
+                ],
+              ),
+            ),
+          ),
+        )
+        .toList();
+
+    return DecoratedContainer(
+      child: Column(
+        children: [
+          ...inputFields,
+          //メールを追加行
+          AddLineRow(
+            title: 'メールを追加',
+            provider: emailTypesProvider,
+            labelValues: EmailType.values,
+            contactItem: ContactItem.email,
+            textEditControllers: emailTextEditControllers,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+final phoneNumbersTextEditControllers =
+    StateProvider.autoDispose<List<TextEditingController>>(
+        (ref) => [TextEditingController(text: ref.read(inputPhoneNumber))]);
+final emailTextEditControllers =
+    StateProvider.autoDispose<List<TextEditingController>>(
+        (ref) => [TextEditingController()]);
