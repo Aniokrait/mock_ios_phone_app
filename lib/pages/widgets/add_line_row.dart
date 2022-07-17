@@ -13,13 +13,15 @@ class AddLineRow<E extends Enum> extends ConsumerWidget {
       required this.title,
       required this.provider,
       required this.labelValues,
-      required this.contactItem})
+      required this.contactItem,
+      required this.textEditControllers})
       : super(key: key);
 
   final String title;
   final AutoDisposeStateNotifierProvider<AbstStateNotifier, List> provider;
   final List<E> labelValues;
   final ContactItem contactItem;
+  final AutoDisposeStateProvider textEditControllers;
 
   void addLine<T>(Reader read) {
     var currentRows = read(provider.notifier);

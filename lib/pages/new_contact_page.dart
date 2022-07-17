@@ -168,6 +168,7 @@ class _PhoneNumbersField extends ConsumerWidget {
                       padding: const EdgeInsets.only(left: 0),
                       onPressed: () {
                         ref.read(phoneTypesProvider.notifier).removeAt(index);
+                        ref.read(phoneNumbersTextEditControllers).removeAt(index);
                       },
                     ),
                     Text(element.type.name),
@@ -229,6 +230,7 @@ class _PhoneNumbersField extends ConsumerWidget {
             provider: phoneTypesProvider,
             labelValues: PhoneType.values,
             contactItem: ContactItem.phone,
+            textEditControllers: phoneNumbersTextEditControllers,
           ),
         ],
       ),
