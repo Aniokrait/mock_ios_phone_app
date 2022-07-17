@@ -93,6 +93,6 @@ extension PhoneTypeExt on PhoneType {
 }
 
 final phoneTypesProvider =
-    StateNotifierProvider<PhoneTypeNotifier, List<NumberOfPhoneType>>((ref) {
+    StateNotifierProvider.autoDispose<PhoneTypeNotifier, List<NumberOfPhoneType>>((ref) {
   return PhoneTypeNotifier(ref.watch(inputPhoneNumber));
 });

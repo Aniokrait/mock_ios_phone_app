@@ -9,6 +9,7 @@ import 'package:mock_ios_phone_app/pages/widgets/design_rules.dart';
 import 'package:collection/collection.dart';
 
 import '../data/phone_type.dart';
+import 'dial_page.dart';
 
 class NewContactPage extends ConsumerWidget {
   const NewContactPage({Key? key}) : super(key: key);
@@ -171,7 +172,14 @@ class _PhoneNumbersField extends ConsumerWidget {
                     ),
                     Text(element.type.name),
                     const Icon(Icons.chevron_right),
-                    Text(element.value),
+                    Expanded(
+                      child: TextFormField(
+                        keyboardType: TextInputType.phone,
+                        decoration: const InputDecoration(border: InputBorder.none),
+                        controller: ref.watch(phoneNumbersTextEditControllers)[index],
+                      ),
+                    ),
+                    //Text(element.value),
                   ],
                 ),
               ),
@@ -227,3 +235,5 @@ class _PhoneNumbersField extends ConsumerWidget {
     );
   }
 }
+
+final phoneNumbersTextEditControllers = StateProvider.autoDispose<List<TextEditingController>>((ref) => [TextEditingController(text: ref.read(inputPhoneNumber))]);

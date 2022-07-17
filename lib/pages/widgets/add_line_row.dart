@@ -4,6 +4,7 @@ import 'package:mock_ios_phone_app/data/contact_item.dart';
 import 'package:mock_ios_phone_app/data/data_type.dart';
 import '../../data/abst_state_notifier.dart';
 import '../../data/phone_type.dart';
+import '../new_contact_page.dart';
 import 'design_rules.dart';
 
 class AddLineRow<E extends Enum> extends ConsumerWidget {
@@ -16,7 +17,7 @@ class AddLineRow<E extends Enum> extends ConsumerWidget {
       : super(key: key);
 
   final String title;
-  final StateNotifierProvider<AbstStateNotifier, List> provider;
+  final AutoDisposeStateNotifierProvider<AbstStateNotifier, List> provider;
   final List<E> labelValues;
   final ContactItem contactItem;
 
@@ -39,6 +40,8 @@ class AddLineRow<E extends Enum> extends ConsumerWidget {
     if (!isAdded) {
       currentRows.add(createDataType(labelValues[0]));
     }
+
+    read(phoneNumbersTextEditControllers.notifier).state.add(TextEditingController());
   }
 
   DataType createDataType(E targetType) {
