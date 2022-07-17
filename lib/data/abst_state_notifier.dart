@@ -14,4 +14,6 @@ abstract class AbstStateNotifier<V extends DataType> extends StateNotifier<List<
   void add(V data) {
     state = [...state, data];
   }
+
+  bool contains<E extends Enum>(E e);
 }

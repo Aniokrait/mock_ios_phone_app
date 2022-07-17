@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mock_ios_phone_app/data/contact_item.dart';
 import 'package:mock_ios_phone_app/pages/widgets/add_line_row.dart';
 import 'package:mock_ios_phone_app/pages/widgets/custom_appbar.dart';
 import 'package:mock_ios_phone_app/pages/widgets/decorated_container.dart';
@@ -8,6 +9,7 @@ import 'package:mock_ios_phone_app/pages/widgets/design_rules.dart';
 import 'package:collection/collection.dart';
 
 import '../data/phone_type.dart';
+import 'dial_page.dart';
 
 class NewContactPage extends ConsumerWidget {
   const NewContactPage({Key? key}) : super(key: key);
@@ -168,9 +170,16 @@ class _PhoneNumbersField extends ConsumerWidget {
                         ref.read(phoneTypesProvider.notifier).removeAt(index);
                       },
                     ),
-                    Text(element.type),
+                    Text(element.type.name),
                     const Icon(Icons.chevron_right),
-                    Text(element.value),
+                    Expanded(
+                      child: TextFormField(
+                        keyboardType: TextInputType.phone,
+                        decoration: const InputDecoration(border: InputBorder.none),
+                        controller: ref.watch(phoneNumbersTextEditControllers)[index],
+                      ),
+                    ),
+                    //Text(element.value),
                   ],
                 ),
               ),
@@ -216,11 +225,15 @@ class _PhoneNumbersField extends ConsumerWidget {
           // },
           //電話を追加行
           AddLineRow(
-              title: '電話を追加',
-              provider: phoneTypesProvider,
-              labelValues: PhoneType.values),
+            title: '電話を追加',
+            provider: phoneTypesProvider,
+            labelValues: PhoneType.values,
+            contactItem: ContactItem.phone,
+          ),
         ],
       ),
     );
   }
 }
+
+final phoneNumbersTextEditControllers = StateProvider.autoDispose<List<TextEditingController>>((ref) => [TextEditingController(text: ref.read(inputPhoneNumber))]);
