@@ -4,11 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-final _phoneNumber = StateProvider<String>((ref) => '');
+final inputPhoneNumber = StateProvider<String>((ref) => '');
 final _visibleAddNumText = StateProvider<bool>((ref) => false);
 
 class DialPage extends ConsumerWidget {
-  DialPage({Key? key}) : super(key: key);
+  const DialPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,19 +34,23 @@ class DialPage extends ConsumerWidget {
   /// button to select a mobile carrier
   Container carrierButton() {
     return Container(
-      margin: const EdgeInsets.only(top: 10),
+      margin: const EdgeInsets.only(top: 10, bottom: 10),
       child: PopupMenuButton(
         itemBuilder: (BuildContext context) => <PopupMenuEntry>[
           const PopupMenuItem(
             height: 24,
-            textStyle: TextStyle(fontSize: 12,color: Colors.grey),
+            textStyle: TextStyle(fontSize: 12, color: Colors.grey),
             child: Text('使用する回線を選択してください。'),
           ),
-          const PopupMenuDivider(height: 0,),
+          const PopupMenuDivider(
+            height: 0,
+          ),
           const PopupMenuItem(
             child: Text('"楽天モバイル"を使用'),
           ),
-          const PopupMenuDivider(height: 0,),
+          const PopupMenuDivider(
+            height: 0,
+          ),
           const PopupMenuItem(
             child: Text('"povoを使用"'),
           ),
@@ -74,7 +78,7 @@ class DialPage extends ConsumerWidget {
     int fontSize = 32;
 
     // 打ち込まれた数字列を取得する(現在値)
-    String phoneNumber = ref.watch(_phoneNumber);
+    String phoneNumber = ref.watch(inputPhoneNumber);
     int numlength = phoneNumber.length;
     // 表示用は別変数にする(先頭は...で置き換えるが内部的には全桁保持しておくため)
     String dispPhoneNum = phoneNumber;
@@ -99,12 +103,34 @@ class DialPage extends ConsumerWidget {
   }
 
   /// button to add phone number to contacts
-  TextButton addToContactsButton() {
-    return TextButton(
-      onPressed: () => {},
-      child: const Text(
-        '番号を追加',
-        style: TextStyle(fontSize: 14),
+  Container addToContactsButton() {
+    return Container(
+      margin: const EdgeInsets.only(top: 10),
+      child: PopupMenuButton(
+        itemBuilder: (BuildContext context) => <PopupMenuEntry>[
+          PopupMenuItem(
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+              title: const Text('新規連絡先を作成'),
+              trailing: const Icon(Icons.contacts),
+              onTap: () => {Navigator.pushNamed(context, 'new-contact')},
+            ),
+          ),
+          const PopupMenuDivider(
+            height: 0,
+          ),
+          const PopupMenuItem(
+            child: ListTile(
+              contentPadding: EdgeInsets.symmetric(horizontal: 0),
+              title: Text('既存の連絡先に追加'),
+              trailing: Icon(Icons.contacts),
+            ),
+          ),
+        ],
+        child: const Text(
+          '番号を追加',
+          style: TextStyle(fontSize: 14, color: Colors.blue),
+        ),
       ),
     );
   }
@@ -179,7 +205,7 @@ class DialPage extends ConsumerWidget {
         minimumSize: const Size(70, 70),
       ),
       onPressed: () {
-        read(_phoneNumber.notifier).state += dialChar;
+        read(inputPhoneNumber.notifier).state += dialChar;
         read(_visibleAddNumText.notifier).state = true;
       },
       //以下ボタン内のテキストの設定
@@ -232,7 +258,7 @@ class DialPage extends ConsumerWidget {
   /// returns handset button
   ElevatedButton handsetButton() {
     return ElevatedButton(
-      onPressed: () => {launchUrlString("tel:$_phoneNumber")},
+      onPressed: () => {launchUrlString("tel:$inputPhoneNumber")},
       style: ElevatedButton.styleFrom(
         primary: Colors.green,
         shape: const CircleBorder(),
@@ -261,12 +287,12 @@ class DialPage extends ConsumerWidget {
           ),
           IconButton(
             onPressed: () {
-              String phoneNum = ref.read(_phoneNumber);
+              String phoneNum = ref.read(inputPhoneNumber);
               if (phoneNum.isEmpty) {
                 return;
               }
               String trimmed = phoneNum.substring(0, phoneNum.length - 1);
-              ref.read(_phoneNumber.notifier).state = trimmed;
+              ref.read(inputPhoneNumber.notifier).state = trimmed;
 
               // 「番号を追加」を非表示に
               if (trimmed.isEmpty) {
