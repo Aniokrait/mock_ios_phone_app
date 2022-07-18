@@ -10,6 +10,7 @@ import 'package:collection/collection.dart';
 
 import '../data/email_type.dart';
 import '../data/phone_type.dart';
+import '../data/url_type.dart';
 import 'dial_page.dart';
 
 class NewContactPage extends ConsumerWidget {
@@ -67,7 +68,10 @@ class _ContactForm extends ConsumerWidget {
                 // メッセージ
 
                 // URL
-
+                _UrlField(),
+                SizedBox(
+                  height: itemHeight,
+                ),
                 // 住所
 
                 // 誕生日
@@ -318,9 +322,80 @@ class _EmailField extends ConsumerWidget {
   }
 }
 
+class _UrlField extends ConsumerWidget {
+  const _UrlField({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    List<Widget> inputFields = ref
+        .watch(urlTypesProvider)
+        .mapIndexed(
+          (index, element) => Container(
+        decoration: const BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: lineColor),
+          ),
+        ),
+        child: SizedBox(
+          height: itemHeight,
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(
+                  Icons.remove_circle,
+                  color: Colors.red,
+                ),
+                constraints: const BoxConstraints(
+                  minWidth: 0,
+                  minHeight: kMinInteractiveDimension,
+                ),
+                padding: const EdgeInsets.only(left: 0),
+                onPressed: () {
+                  ref.read(urlTypesProvider.notifier).removeAt(index);
+                  ref.read(urlTextEditControllers).removeAt(index);
+                },
+              ),
+              Text(element.type.name),
+              const Icon(Icons.chevron_right),
+              Expanded(
+                child: TextFormField(
+                  keyboardType: TextInputType.url,
+                  decoration:
+                  const InputDecoration(border: InputBorder.none, hintText: 'URL'),
+                  controller: ref.watch(urlTextEditControllers)[index],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    )
+        .toList();
+
+    return DecoratedContainer(
+      child: Column(
+        children: [
+          ...inputFields,
+          //URLを追加行
+          AddLineRow(
+            title: 'URLを追加',
+            provider: urlTypesProvider,
+            labelValues: UrlType.values,
+            contactItem: ContactItem.url,
+            textEditControllers: urlTextEditControllers,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 final phoneNumbersTextEditControllers =
     StateProvider.autoDispose<List<TextEditingController>>(
         (ref) => [TextEditingController(text: ref.read(inputPhoneNumber))]);
 final emailTextEditControllers =
     StateProvider.autoDispose<List<TextEditingController>>(
+        (ref) => [TextEditingController()]);
+final urlTextEditControllers =
+StateProvider.autoDispose<List<TextEditingController>>(
         (ref) => [TextEditingController()]);

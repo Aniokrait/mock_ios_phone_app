@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mock_ios_phone_app/data/contact_item.dart';
 import 'package:mock_ios_phone_app/data/data_type.dart';
 import 'package:mock_ios_phone_app/data/email_type.dart';
+import 'package:mock_ios_phone_app/data/url_type.dart';
 import '../../data/abst_state_notifier.dart';
 import '../../data/phone_type.dart';
 import '../new_contact_page.dart';
@@ -53,6 +54,8 @@ class AddLineRow<E extends Enum> extends ConsumerWidget {
         return NumberOfPhoneType(type: targetType as PhoneType, value: '');
       case ContactItem.email:
         return AddressOfEmailType(type: targetType as EmailType, value: '');
+      case ContactItem.url:
+        return UrlOfUrlType(type: targetType as UrlType, value: '');
       default:
         throw UnimplementedError();
     }
