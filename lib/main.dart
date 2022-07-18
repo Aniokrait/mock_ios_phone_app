@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mock_ios_phone_app/pages/new_contact_page.dart';
 import 'package:mock_ios_phone_app/pages/pages.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -31,6 +33,18 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const MyHomePage(),
       },
+      //ローカライズ
+      localizationsDelegates: const [
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+      ],
+      //使用できるロケールの設定
+      supportedLocales: const [
+        Locale('ja'),
+      ],
+      //ロケールを設定
+      locale: const Locale('ja'),
     );
   }
 }

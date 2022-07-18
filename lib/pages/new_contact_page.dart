@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mock_ios_phone_app/data/contact_item.dart';
@@ -8,8 +9,12 @@ import 'package:mock_ios_phone_app/pages/widgets/decorated_text_form_field.dart'
 import 'package:mock_ios_phone_app/pages/widgets/design_rules.dart';
 import 'package:collection/collection.dart';
 
+import '../data/birthday_type.dart';
+import '../data/date_type.dart';
 import '../data/email_type.dart';
+import '../data/instant_message_type.dart';
 import '../data/phone_type.dart';
+import '../data/sns_type.dart';
 import '../data/url_type.dart';
 import 'dial_page.dart';
 
@@ -75,15 +80,27 @@ class _ContactForm extends ConsumerWidget {
                 // 住所
 
                 // 誕生日
-
+                _BirthdayField(),
+                SizedBox(
+                  height: itemHeight,
+                ),
                 // 日付
-
+                _DateField(),
+                SizedBox(
+                  height: itemHeight,
+                ),
                 // 関係
 
                 // SNS
-
+                _SnsField(),
+                SizedBox(
+                  height: itemHeight,
+                ),
                 // インスタントメッセージ
-
+                _InstantMessageField(),
+                SizedBox(
+                  height: itemHeight,
+                ),
                 // メモ
 
                 // フィールドを追加
@@ -189,8 +206,8 @@ class _PhoneNumbersField extends ConsumerWidget {
                     Expanded(
                       child: TextFormField(
                         keyboardType: TextInputType.emailAddress,
-                        decoration:
-                            const InputDecoration(border: InputBorder.none, hintText: '電話'),
+                        decoration: const InputDecoration(
+                            border: InputBorder.none, hintText: '電話'),
                         controller:
                             ref.watch(phoneNumbersTextEditControllers)[index],
                       ),
@@ -291,8 +308,8 @@ class _EmailField extends ConsumerWidget {
                   Expanded(
                     child: TextFormField(
                       keyboardType: TextInputType.emailAddress,
-                      decoration:
-                          const InputDecoration(border: InputBorder.none, hintText: 'メール'),
+                      decoration: const InputDecoration(
+                          border: InputBorder.none, hintText: 'メール'),
                       controller: ref.watch(emailTextEditControllers)[index],
                     ),
                   ),
@@ -331,45 +348,45 @@ class _UrlField extends ConsumerWidget {
         .watch(urlTypesProvider)
         .mapIndexed(
           (index, element) => Container(
-        decoration: const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: lineColor),
-          ),
-        ),
-        child: SizedBox(
-          height: itemHeight,
-          child: Row(
-            children: [
-              IconButton(
-                icon: const Icon(
-                  Icons.remove_circle,
-                  color: Colors.red,
-                ),
-                constraints: const BoxConstraints(
-                  minWidth: 0,
-                  minHeight: kMinInteractiveDimension,
-                ),
-                padding: const EdgeInsets.only(left: 0),
-                onPressed: () {
-                  ref.read(urlTypesProvider.notifier).removeAt(index);
-                  ref.read(urlTextEditControllers).removeAt(index);
-                },
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: lineColor),
               ),
-              Text(element.type.name),
-              const Icon(Icons.chevron_right),
-              Expanded(
-                child: TextFormField(
-                  keyboardType: TextInputType.url,
-                  decoration:
-                  const InputDecoration(border: InputBorder.none, hintText: 'URL'),
-                  controller: ref.watch(urlTextEditControllers)[index],
-                ),
+            ),
+            child: SizedBox(
+              height: itemHeight,
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.remove_circle,
+                      color: Colors.red,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 0,
+                      minHeight: kMinInteractiveDimension,
+                    ),
+                    padding: const EdgeInsets.only(left: 0),
+                    onPressed: () {
+                      ref.read(urlTypesProvider.notifier).removeAt(index);
+                      ref.read(urlTextEditControllers).removeAt(index);
+                    },
+                  ),
+                  Text(element.type.name),
+                  const Icon(Icons.chevron_right),
+                  Expanded(
+                    child: TextFormField(
+                      keyboardType: TextInputType.url,
+                      decoration: const InputDecoration(
+                          border: InputBorder.none, hintText: 'URL'),
+                      controller: ref.watch(urlTextEditControllers)[index],
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
-    )
+        )
         .toList();
 
     return DecoratedContainer(
@@ -390,6 +407,363 @@ class _UrlField extends ConsumerWidget {
   }
 }
 
+//final birthdayProvider = StateProvider((ref) => DateTime(2016, 10, 26));
+
+class _BirthdayField extends ConsumerWidget {
+  const _BirthdayField({Key? key}) : super(key: key);
+
+  void _showDialog(BuildContext context, Widget child) {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) => Container(
+        height: 216,
+        padding: const EdgeInsets.only(top: 6.0),
+        // The Bottom margin is provided to align the popup above the system navigation bar.
+        margin: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        // Provide a background color for the popup.
+        color: CupertinoColors.systemBackground.resolveFrom(context),
+        // Use a SafeArea widget to avoid system overlaps.
+        child: SafeArea(
+          top: false,
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    List<Widget> inputFields = ref
+        .watch(birthdayTypesProvider)
+        .mapIndexed(
+          (index, element) => Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: index < 1 ? const BorderSide(color: lineColor) : BorderSide.none,
+              ),
+            ),
+            child: SizedBox(
+              height: itemHeight,
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.remove_circle,
+                      color: Colors.red,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 0,
+                      minHeight: kMinInteractiveDimension,
+                    ),
+                    padding: const EdgeInsets.only(left: 0),
+                    onPressed: () {
+                      ref.read(birthdayTypesProvider.notifier).removeAt(index);
+                    },
+                  ),
+                  Text(element.type.name),
+                  const Icon(Icons.chevron_right),
+                  // Expanded(
+                  //   child: TextFormField(
+                  //     keyboardType: TextInputType.datetime,
+                  //     decoration: const InputDecoration(
+                  //         border: InputBorder.none, hintText: '日付'),
+                  //     controller: ref.watch(birthdayTextEditControllers)[index],
+                  //   ),
+                  // ),
+
+                  // Expanded(
+                  //   child: CupertinoDatePicker(
+                  //     mode: CupertinoDatePickerMode.date,
+                  //     initialDateTime: DateTime.now(),
+                  //     onDateTimeChanged: (DateTime value) {},
+                  //   ),
+                  // )
+                  CupertinoButton(
+                    // このpadding設定がないと字が見切れるFlutterのクソ仕様
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      '${ref.watch(birthdayTypesProvider)[index].value.month}月${ref.watch(birthdayTypesProvider)[index].value.day}日',
+                      style: const TextStyle(
+                        fontSize: 16.0,
+                      ),
+                    ),
+                    onPressed: () => _showDialog(
+                      context,
+                      CupertinoDatePicker(
+                        initialDateTime: DateTime.now(),
+                        mode: CupertinoDatePickerMode.date,
+                        onDateTimeChanged: (DateTime newDate) {
+                          ref.read(birthdayTypesProvider.notifier).updateDate(index, newDate);
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        )
+        .toList();
+
+    return DecoratedContainer(
+      child: Column(
+        children: [
+          ...inputFields,
+          //誕生日を追加行
+          //最大二行まで
+          if (inputFields.length < 2)
+            AddLineRow(
+              title: '誕生日を追加',
+              provider: birthdayTypesProvider,
+              labelValues: BirthdayType.values,
+              contactItem: ContactItem.birthday,
+              textEditControllers: birthdayTextEditControllers,
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DateField extends ConsumerWidget {
+  const _DateField({Key? key}) : super(key: key);
+
+  void _showDialog(BuildContext context, Widget child) {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) => Container(
+        height: 216,
+        padding: const EdgeInsets.only(top: 6.0),
+        // The Bottom margin is provided to align the popup above the system navigation bar.
+        margin: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        // Provide a background color for the popup.
+        color: CupertinoColors.systemBackground.resolveFrom(context),
+        // Use a SafeArea widget to avoid system overlaps.
+        child: SafeArea(
+          top: false,
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    List<Widget> inputFields = ref
+        .watch(dateTypesProvider)
+        .mapIndexed(
+          (index, element) => Container(
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: lineColor),
+              ),
+            ),
+            child: SizedBox(
+              height: itemHeight,
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.remove_circle,
+                      color: Colors.red,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 0,
+                      minHeight: kMinInteractiveDimension,
+                    ),
+                    padding: const EdgeInsets.only(left: 0),
+                    onPressed: () {
+                      ref.read(dateTypesProvider.notifier).removeAt(index);
+                    },
+                  ),
+                  Text(element.type.name),
+                  const Icon(Icons.chevron_right),
+                  CupertinoButton(
+                    // このpadding設定がないと字が見切れるFlutterのクソ仕様
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      '${ref.watch(dateTypesProvider)[index].value.month}月${ref.watch(dateTypesProvider)[index].value.day}日',
+                      style: const TextStyle(
+                        fontSize: 16.0,
+                      ),
+                    ),
+                    onPressed: () => _showDialog(
+                      context,
+                      CupertinoDatePicker(
+                        initialDateTime: DateTime.now(),
+                        mode: CupertinoDatePickerMode.date,
+                        onDateTimeChanged: (DateTime newDate) {
+                          ref.read(dateTypesProvider.notifier).updateDate(index, newDate);
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        )
+        .toList();
+
+    return DecoratedContainer(
+      child: Column(
+        children: [
+          ...inputFields,
+          //日付を追加行
+          AddLineRow(
+            title: '日付を追加',
+            provider: dateTypesProvider,
+            labelValues: DateType.values,
+            contactItem: ContactItem.date,
+            textEditControllers: dateTextEditControllers,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SnsField extends ConsumerWidget {
+  const _SnsField({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    List<Widget> inputFields = ref
+        .watch(snsTypesProvider)
+        .mapIndexed(
+          (index, element) => Container(
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: lineColor),
+              ),
+            ),
+            child: SizedBox(
+              height: itemHeight,
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.remove_circle,
+                      color: Colors.red,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 0,
+                      minHeight: kMinInteractiveDimension,
+                    ),
+                    padding: const EdgeInsets.only(left: 0),
+                    onPressed: () {
+                      ref.read(snsTypesProvider.notifier).removeAt(index);
+                      ref.read(snsTextEditControllers).removeAt(index);
+                    },
+                  ),
+                  Text(element.type.name),
+                  const Icon(Icons.chevron_right),
+                  Expanded(
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                          border: InputBorder.none, hintText: 'SNSプロフィール'),
+                      controller: ref.watch(snsTextEditControllers)[index],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        )
+        .toList();
+
+    return DecoratedContainer(
+      child: Column(
+        children: [
+          ...inputFields,
+          //SNSを追加行
+          AddLineRow(
+            title: 'SNSを追加',
+            provider: snsTypesProvider,
+            labelValues: SnsType.values,
+            contactItem: ContactItem.sns,
+            textEditControllers: snsTextEditControllers,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InstantMessageField extends ConsumerWidget {
+  const _InstantMessageField({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    List<Widget> inputFields = ref
+        .watch(instantMessageTypesProvider)
+        .mapIndexed(
+          (index, element) => Container(
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: lineColor),
+              ),
+            ),
+            child: SizedBox(
+              height: itemHeight,
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.remove_circle,
+                      color: Colors.red,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 0,
+                      minHeight: kMinInteractiveDimension,
+                    ),
+                    padding: const EdgeInsets.only(left: 0),
+                    onPressed: () {
+                      ref
+                          .read(instantMessageTypesProvider.notifier)
+                          .removeAt(index);
+                      ref.read(instantMsgTextEditControllers).removeAt(index);
+                    },
+                  ),
+                  Text(element.type.name),
+                  const Icon(Icons.chevron_right),
+                  Expanded(
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                          border: InputBorder.none, hintText: 'メッセージ'),
+                      controller:
+                          ref.watch(instantMsgTextEditControllers)[index],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        )
+        .toList();
+
+    return DecoratedContainer(
+      child: Column(
+        children: [
+          ...inputFields,
+          //インスタントメッセージを追加行
+          AddLineRow(
+            title: 'インスタントメッセージを追加',
+            provider: instantMessageTypesProvider,
+            labelValues: InstantMessageType.values,
+            contactItem: ContactItem.instantMessage,
+            textEditControllers: instantMsgTextEditControllers,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 final phoneNumbersTextEditControllers =
     StateProvider.autoDispose<List<TextEditingController>>(
         (ref) => [TextEditingController(text: ref.read(inputPhoneNumber))]);
@@ -397,5 +771,18 @@ final emailTextEditControllers =
     StateProvider.autoDispose<List<TextEditingController>>(
         (ref) => [TextEditingController()]);
 final urlTextEditControllers =
-StateProvider.autoDispose<List<TextEditingController>>(
+    StateProvider.autoDispose<List<TextEditingController>>(
+        (ref) => [TextEditingController()]);
+// TODO 密結合したせいで消せなくなった。
+final birthdayTextEditControllers =
+    StateProvider.autoDispose<List<TextEditingController>>(
+        (ref) => [TextEditingController()]);
+final dateTextEditControllers =
+    StateProvider.autoDispose<List<TextEditingController>>(
+        (ref) => [TextEditingController()]);
+final snsTextEditControllers =
+    StateProvider.autoDispose<List<TextEditingController>>(
+        (ref) => [TextEditingController()]);
+final instantMsgTextEditControllers =
+    StateProvider.autoDispose<List<TextEditingController>>(
         (ref) => [TextEditingController()]);
