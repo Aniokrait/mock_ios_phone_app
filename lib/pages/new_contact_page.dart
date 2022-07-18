@@ -54,8 +54,14 @@ class _ContactForm extends ConsumerWidget {
                   height: itemHeight,
                 ),
                 _PhoneNumbersField(),
+                SizedBox(
+                  height: itemHeight,
+                ),
                 // メール
                 _EmailField(),
+                SizedBox(
+                  height: itemHeight,
+                ),
                 // 着信音
 
                 // メッセージ
@@ -178,9 +184,9 @@ class _PhoneNumbersField extends ConsumerWidget {
                     const Icon(Icons.chevron_right),
                     Expanded(
                       child: TextFormField(
-                        keyboardType: TextInputType.phone,
+                        keyboardType: TextInputType.emailAddress,
                         decoration:
-                            const InputDecoration(border: InputBorder.none),
+                            const InputDecoration(border: InputBorder.none, hintText: '電話'),
                         controller:
                             ref.watch(phoneNumbersTextEditControllers)[index],
                       ),
@@ -280,9 +286,9 @@ class _EmailField extends ConsumerWidget {
                   const Icon(Icons.chevron_right),
                   Expanded(
                     child: TextFormField(
-                      keyboardType: TextInputType.phone,
+                      keyboardType: TextInputType.emailAddress,
                       decoration:
-                          const InputDecoration(border: InputBorder.none),
+                          const InputDecoration(border: InputBorder.none, hintText: 'メール'),
                       controller: ref.watch(emailTextEditControllers)[index],
                     ),
                   ),
