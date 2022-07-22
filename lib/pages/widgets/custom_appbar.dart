@@ -6,7 +6,10 @@ import '../new_contact_page.dart';
 
 class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const CustomAppBar(
-      {Key? key, required this.leadingText, required this.mainTitle, required this.trailingText})
+      {Key? key,
+      required this.leadingText,
+      required this.mainTitle,
+      required this.trailingText})
       : preferredSize = const Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -30,16 +33,22 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
           style: const TextStyle(fontSize: 16, color: Colors.white),
         ),
       ),
-      title: Text(mainTitle),
+      title: Center(
+        child: Text(mainTitle),
+      ),
       actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context);
-            AppBar();
-          },
-          child: Text(
-            trailingText,
-            style: const TextStyle(fontSize: 16, color: Colors.white),
+        Container(
+          width: 100,
+          alignment: Alignment.centerRight,
+          child: TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              AppBar();
+            },
+            child: Text(
+              trailingText,
+              style: const TextStyle(fontSize: 16, color: Colors.white),
+            ),
           ),
         ),
       ],
