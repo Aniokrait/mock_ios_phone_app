@@ -16,6 +16,7 @@ import '../data/instant_message_type.dart';
 import '../data/phone_type.dart';
 import '../data/sns_type.dart';
 import '../data/url_type.dart';
+import '../model/ring_tone_model.dart';
 import 'dial_page.dart';
 
 class NewContactPage extends ConsumerWidget {
@@ -23,13 +24,16 @@ class NewContactPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const Scaffold(
+    return Scaffold(
       appBar: CustomAppBar(
         leadingText: 'キャンセル',
         mainTitle: '新規連絡先',
         trailingText: 'OK',
+        trailingAction: () {
+          Navigator.pop(context);
+        },
       ),
-      body: _ContactForm(),
+      body: const _ContactForm(),
     );
   }
 }
@@ -362,8 +366,13 @@ class _RingTone extends ConsumerWidget {
                   'デフォルト',
                   style: TextStyle(fontSize: 15),
                 ),
-                onPressed: () {
-                  Navigator.pushNamed(context, 'ring-tone');
+                onPressed: () async {
+                  RingToneModel result =
+                      await Navigator.pushNamed(context, 'ring-tone')
+                          as RingToneModel;
+                  print(result.isCallWhenAlert);
+                  print(result.targetSound1);
+                  print(result.targetSound2);
                 }),
             const Spacer(),
             const Icon(

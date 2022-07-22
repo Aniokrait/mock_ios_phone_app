@@ -1,22 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mock_ios_phone_app/data/notification_sound.dart';
 import 'package:mock_ios_phone_app/pages/widgets/custom_appbar.dart';
 import 'package:mock_ios_phone_app/pages/widgets/decorated_container.dart';
 import 'package:mock_ios_phone_app/pages/widgets/design_rules.dart';
 
+import '../data/ring_tone.dart';
+import '../model/ring_tone_model.dart';
+
 class RingTonePage extends ConsumerWidget {
   const RingTonePage({Key? key}) : super(key: key);
 
+  ///完了ボタン押下時のアクション
+  void returnRingToneConfig(BuildContext context, Reader read) {
+    var compositeList = [
+      RingTone.opening,
+      ...RingTone.values,
+      ...NotificationSound.values
+    ];
+    bool isCall = read(isCallWhenAlert);
+
+    RingToneModel result;
+    if (compositeList[read(selectedRingtone)] is RingTone) {
+      result = RingToneModel(
+          targetSound1: compositeList[read(selectedRingtone)] as RingTone,
+          isCallWhenAlert: isCall);
+    } else {
+      result = RingToneModel(
+          targetSound2:
+              compositeList[read(selectedRingtone)] as NotificationSound,
+          isCallWhenAlert: isCall);
+    }
+    Navigator.pop(
+      context,
+      result,
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const Scaffold(
+    return Scaffold(
       appBar: CustomAppBar(
         leadingText: 'キャンセル',
         mainTitle: '着信音',
         trailingText: '完了',
+        trailingAction: () {
+          returnRingToneConfig(context, ref.read);
+        },
       ),
-      body: _RingToneForm(),
+      body: const _RingToneForm(),
     );
   }
 }
@@ -84,17 +117,24 @@ class _RingToneForm extends ConsumerWidget {
           DecoratedContainer(
             child: SizedBox(
               height: itemHeight,
-              child: Row(
-                children: const [
-                  Icon(
-                    Icons.check,
-                    color: Colors.blue,
-                  ),
-                  SizedBox(
-                    width: 16,
-                  ),
-                  Text('オープニング'),
-                ],
+              child: InkWell(
+                onTap: () {
+                  ref.read(selectedRingtone.notifier).state = 0;
+                },
+                child: Row(
+                  children: [
+                    ref.watch(selectedRingtone) == 0
+                        ? const Icon(
+                            Icons.check,
+                            color: Colors.blue,
+                          )
+                        : const SizedBox(width: 24),
+                    const SizedBox(
+                      width: 16,
+                    ),
+                    Text(RingTone.opening.name),
+                  ],
+                ),
               ),
             ),
           ),
@@ -112,107 +152,95 @@ class _RingToneForm extends ConsumerWidget {
           DecoratedContainer(
             child: Column(
               children: [
-                SizedBox(
-                  height: itemHeight,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(color: lineColor),
-                        ),
-                        //color: Colors.blue
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.check,
-                          color: Colors.blue,
-                        ),
-                        const SizedBox(
-                          width: 16,
-                        ),
-                        Expanded(
-                          child: Container(
-                            constraints: const BoxConstraints.expand(),
-                            decoration: const BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(color: lineColor),
-                              ),
-                              //color: Colors.green
-                            ),
-                            child: const Text('オープニング'),
-                          ),
-                        ),
-                      ],
-                    ),
+                //for (RingTone e in RingTone.values) ...{
+                for (int i = 0; i < RingTone.values.length; i++) ...{
+                  _RingtoneRow(
+                    index: i,
+                    beforeArrayLength: 1,
+                    ringToneName: RingTone.values[i].name,
                   ),
-                ),
-                SizedBox(
-                  height: itemHeight,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const Icon(
-                        Icons.check,
-                        color: Colors.blue,
-                      ),
-                      const SizedBox(
-                        width: 16,
-                      ),
-                      Expanded(
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(color: lineColor),
-                            ),
-                          ),
-                          child: const Text('オープニング'),
-                        ),
-                      ),
-                      const Text('data'),
-                    ],
-                  ),
-                ),
-
+                }
               ],
             ),
           ),
+
+          ///通知音
+          Container(
+            margin: const EdgeInsets.only(top: 18),
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.only(left: 10),
+            child: const Text(
+              '通知音',
+              style: TextStyle(fontSize: 12),
+            ),
+          ),
           DecoratedContainer(
-            child: Row(
+            child: Column(
               children: [
-                Column(
-                  children: const [
-                    Icon(
-                      Icons.check,
-                      color: Colors.blue,
-                    ),
-                  ],
-                ),
-                Column(
-                  children: const [
-                    SizedBox(
-                      width: 16,
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Container(
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(color: lineColor),
-                        ),
-                      ),
-                      child: const Text('オープニング'),
-                    ),
-                  ],
-                ),
+                for (int i = 0; i < NotificationSound.values.length; i++) ...{
+                  _RingtoneRow(
+                    index: i,
+                    beforeArrayLength: 1 + RingTone.values.length,
+                    ringToneName: NotificationSound.values[i].name,
+                  ),
+                }
               ],
             ),
-          )
+          ),
         ],
       ),
     );
   }
 }
 
+class _RingtoneRow extends ConsumerWidget {
+  const _RingtoneRow({
+    Key? key,
+    required this.index,
+    required this.beforeArrayLength,
+    required this.ringToneName,
+  }) : super(key: key);
+
+  final int index;
+  final int beforeArrayLength;
+  final String ringToneName;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return SizedBox(
+      height: itemHeight,
+      child: InkWell(
+        onTap: () {
+          ref.read(selectedRingtone.notifier).state = index + beforeArrayLength;
+        },
+        child: Row(
+          children: [
+            ref.watch(selectedRingtone) == index + beforeArrayLength
+                ? const Icon(
+                    Icons.check,
+                    color: Colors.blue,
+                  )
+                : const SizedBox(width: 24),
+            const SizedBox(
+              width: 16,
+            ),
+            Expanded(
+              child: Container(
+                alignment: Alignment.centerLeft,
+                decoration: const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: lineColor),
+                  ),
+                ),
+                child: Text(ringToneName),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 final isCallWhenAlert = StateProvider<bool>((ref) => false);
+final selectedRingtone = StateProvider<int>((ref) => 0);

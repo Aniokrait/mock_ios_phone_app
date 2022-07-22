@@ -9,13 +9,15 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
       {Key? key,
       required this.leadingText,
       required this.mainTitle,
-      required this.trailingText})
+      required this.trailingText,
+      required this.trailingAction})
       : preferredSize = const Size.fromHeight(kToolbarHeight),
         super(key: key);
 
   final String leadingText;
   final String mainTitle;
   final String trailingText;
+  final VoidCallback trailingAction;
 
   @override
   final Size preferredSize; // default is 56.0
@@ -42,8 +44,7 @@ class CustomAppBar extends ConsumerWidget implements PreferredSizeWidget {
           alignment: Alignment.centerRight,
           child: TextButton(
             onPressed: () {
-              Navigator.pop(context);
-              AppBar();
+              trailingAction();
             },
             child: Text(
               trailingText,
