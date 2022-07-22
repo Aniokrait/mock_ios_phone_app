@@ -69,7 +69,10 @@ class _ContactForm extends ConsumerWidget {
                   height: itemHeight,
                 ),
                 // 着信音
-
+                _RingTone(),
+                SizedBox(
+                  height: itemHeight,
+                ),
                 // メッセージ
 
                 // URL
@@ -339,6 +342,41 @@ class _EmailField extends ConsumerWidget {
   }
 }
 
+class _RingTone extends ConsumerWidget {
+  const _RingTone({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return DecoratedContainer(
+      child: SizedBox(
+        height: itemHeight,
+        child: Row(
+          children: [
+            const Text('着信音'),
+            const SizedBox(
+              width: 15,
+            ),
+            CupertinoButton(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: const Text(
+                  'デフォルト',
+                  style: TextStyle(fontSize: 15),
+                ),
+                onPressed: () {
+                  Navigator.pushNamed(context, 'ring-tone');
+                }),
+            const Spacer(),
+            const Icon(
+              Icons.chevron_right,
+              color: Colors.black45,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _UrlField extends ConsumerWidget {
   const _UrlField({Key? key}) : super(key: key);
 
@@ -407,8 +445,6 @@ class _UrlField extends ConsumerWidget {
   }
 }
 
-//final birthdayProvider = StateProvider((ref) => DateTime(2016, 10, 26));
-
 class _BirthdayField extends ConsumerWidget {
   const _BirthdayField({Key? key}) : super(key: key);
 
@@ -441,7 +477,9 @@ class _BirthdayField extends ConsumerWidget {
           (index, element) => Container(
             decoration: BoxDecoration(
               border: Border(
-                bottom: index < 1 ? const BorderSide(color: lineColor) : BorderSide.none,
+                bottom: index < 1
+                    ? const BorderSide(color: lineColor)
+                    : BorderSide.none,
               ),
             ),
             child: SizedBox(
@@ -495,7 +533,9 @@ class _BirthdayField extends ConsumerWidget {
                         initialDateTime: DateTime.now(),
                         mode: CupertinoDatePickerMode.date,
                         onDateTimeChanged: (DateTime newDate) {
-                          ref.read(birthdayTypesProvider.notifier).updateDate(index, newDate);
+                          ref
+                              .read(birthdayTypesProvider.notifier)
+                              .updateDate(index, newDate);
                         },
                       ),
                     ),
@@ -597,7 +637,9 @@ class _DateField extends ConsumerWidget {
                         initialDateTime: DateTime.now(),
                         mode: CupertinoDatePickerMode.date,
                         onDateTimeChanged: (DateTime newDate) {
-                          ref.read(dateTypesProvider.notifier).updateDate(index, newDate);
+                          ref
+                              .read(dateTypesProvider.notifier)
+                              .updateDate(index, newDate);
                         },
                       ),
                     ),
