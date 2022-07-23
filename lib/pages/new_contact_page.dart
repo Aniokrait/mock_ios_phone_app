@@ -353,24 +353,23 @@ class _RingTone extends ConsumerWidget {
   const _RingTone({Key? key}) : super(key: key);
 
   String makeRingToneString(WidgetRef ref, RingToneModel? ringToneModel) {
-    //着信音画面で選択した音をresultに代入。初期表示時は「デフォルト」
-    String result = ref.watch(ringToneText)?.targetSound1?.toString() ??
-        ref.watch(ringToneText)?.targetSound2.toString() ??
-        'デフォルト';
-
-    //着信音画面でデフォルトを選んだときはRingToneModelがnullでないので改めてチェック
-    if (ringToneModel?.isDefaultSound ?? false) {
-      result = 'デフォルト';
+    if (ringToneModel == null ||
+        //画面初期表示時または
+        (ringToneModel.isDefaultSound && !ringToneModel.isCallWhenAlert)) {
+      //デフォルトかつ「緊急時に鳴らす」でない場合は「デフォルト」
+      return 'デフォルト';
+    } else if (ringToneModel.isDefaultSound && ringToneModel.isCallWhenAlert) {
+      //デフォルトかつ「緊急時に鳴らす」場合は「緊急時は鳴らす」
+      return '緊急時に鳴らす';
     }
 
-    //緊急時に鳴らすフラグが立っている場合、改行して「緊急時に鳴らす」も表示する
-    //ただしデフォルトの場合は、「デフォルト」を消し「緊急時に鳴らす」を改行なしで表示する
-    if (ringToneModel?.isCallWhenAlert ?? false) {
-      if (ringToneModel?.isDefaultSound ?? false) {
-        result = '緊急時に鳴らす';
-      } else {
-        result += '\n緊急時に鳴らす';
-      }
+    String result = 'サウンド: ';
+    result += ref.watch(messageText)!.targetSound1?.toString() ??
+        ref.watch(messageText)!.targetSound2.toString();
+
+    //サウンドがデフォルト以外で「緊急時に鳴らす」フラグが立っていれば改行して「緊急時に鳴らす」を表示
+    if (ringToneModel.isCallWhenAlert) {
+      result += '\n緊急時に鳴らす';
     }
 
     return result;
@@ -421,24 +420,23 @@ class _MessageField extends ConsumerWidget {
   const _MessageField({Key? key}) : super(key: key);
 
   String makeMessageString(WidgetRef ref, RingToneModel? ringToneModel) {
-    //メッセージ画面で選択した音をresultに代入。初期表示時は「デフォルト」
-    String result = ref.watch(messageText)?.targetSound1?.toString() ??
-        ref.watch(messageText)?.targetSound2.toString() ??
-        'デフォルト';
-
-    //メッセージ画面でデフォルトを選んだときはRingToneModelがnullでないので改めてチェック
-    if (ringToneModel?.isDefaultSound ?? false) {
-      result = 'デフォルト';
+    if (ringToneModel == null ||
+        //画面初期表示時または
+        (ringToneModel.isDefaultSound && !ringToneModel.isCallWhenAlert)) {
+      //デフォルトかつ「緊急時に鳴らす」でない場合は「デフォルト」
+      return 'デフォルト';
+    } else if (ringToneModel.isDefaultSound && ringToneModel.isCallWhenAlert) {
+      //デフォルトかつ「緊急時に鳴らす」場合は「緊急時は鳴らす」
+      return '緊急時に鳴らす';
     }
 
-    //緊急時に鳴らすフラグが立っている場合、改行して「緊急時に鳴らす」も表示する
-    //ただしデフォルトの場合は、「デフォルト」を消し「緊急時に鳴らす」を改行なしで表示する
-    if (ringToneModel?.isCallWhenAlert ?? false) {
-      if (ringToneModel?.isDefaultSound ?? false) {
-        result = '緊急時に鳴らす';
-      } else {
-        result += '\n緊急時に鳴らす';
-      }
+    String result = 'サウンド: ';
+    result += ref.watch(messageText)!.targetSound1?.toString() ??
+        ref.watch(messageText)!.targetSound2.toString();
+
+    //サウンドがデフォルト以外で「緊急時に鳴らす」フラグが立っていれば改行して「緊急時に鳴らす」を表示
+    if (ringToneModel.isCallWhenAlert) {
+      result += '\n緊急時に鳴らす';
     }
 
     return result;
@@ -446,6 +444,7 @@ class _MessageField extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    //このresultとmessageTextは基本同じオブジェクトが入る。再ビルドのためだけにプロバイダーにしている。
     RingToneModel? result;
 
     return DecoratedContainer(
