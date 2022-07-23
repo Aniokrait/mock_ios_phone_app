@@ -183,7 +183,7 @@ class _RingToneForm extends ConsumerWidget {
           DecoratedContainer(
             child: Column(
               children: [
-                for (int i = 0; i < NotificationSound.values.length; i++) ...{
+                for (int i = 2; i < NotificationSound.values.length; i++) ...{
                   _RingtoneRow(
                     index: i,
                     beforeArrayLength: 1 + RingTone.values.length,

@@ -364,8 +364,8 @@ class _RingTone extends ConsumerWidget {
     }
 
     String result = 'サウンド: ';
-    result += ref.watch(messageText)!.targetSound1?.toString() ??
-        ref.watch(messageText)!.targetSound2.toString();
+    result += ref.watch(ringToneText)!.targetSound1?.toString() ??
+        ref.watch(ringToneText)!.targetSound2.toString();
 
     //サウンドがデフォルト以外で「緊急時に鳴らす」フラグが立っていれば改行して「緊急時に鳴らす」を表示
     if (ringToneModel.isCallWhenAlert) {
