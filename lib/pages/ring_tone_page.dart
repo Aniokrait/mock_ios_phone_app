@@ -32,6 +32,10 @@ class RingTonePage extends ConsumerWidget {
               compositeList[read(selectedRingtone)] as NotificationSound,
           isCallWhenAlert: isCall);
     }
+
+    //デフォルトサウンドか？
+    result.isDefaultSound = read(selectedRingtone) == 0;
+
     Navigator.pop(
       context,
       result,

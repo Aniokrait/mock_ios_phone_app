@@ -349,8 +349,34 @@ class _EmailField extends ConsumerWidget {
 class _RingTone extends ConsumerWidget {
   const _RingTone({Key? key}) : super(key: key);
 
+  String makeRingToneString(WidgetRef ref, RingToneModel? ringToneModel) {
+    //着信音画面で選択した音をresultに代入。初期表示時は「デフォルト」
+    String result = ref.watch(ringToneText)?.targetSound1?.toString() ??
+        ref.watch(ringToneText)?.targetSound2.toString() ??
+        'デフォルト';
+
+    //着信音画面でデフォルトを選んだときはRingToneModelがnullでないので改めてチェック
+    if (ringToneModel?.isDefaultSound ?? false) {
+      result = 'デフォルト';
+    }
+
+    //緊急時に鳴らすフラグが立っている場合、改行して「緊急時に鳴らす」も表示する
+    //ただしデフォルトの場合は、「デフォルト」を消し「緊急時に鳴らす」を改行なしで表示する
+    if (ringToneModel?.isCallWhenAlert ?? false) {
+      if (ringToneModel?.isDefaultSound ?? false) {
+        result = '緊急時に鳴らす';
+      } else {
+        result += '\n緊急時に鳴らす';
+      }
+    }
+
+    return result;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    RingToneModel? result;
+
     return DecoratedContainer(
       child: SizedBox(
         height: itemHeight,
@@ -361,19 +387,21 @@ class _RingTone extends ConsumerWidget {
               width: 15,
             ),
             CupertinoButton(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: const Text(
-                  'デフォルト',
-                  style: TextStyle(fontSize: 15),
+              padding: const EdgeInsets.symmetric(vertical: 0),
+              onPressed: () async {
+                result = await Navigator.pushNamed(context, 'ring-tone')
+                    as RingToneModel;
+
+                ref.read(ringToneText.notifier).state = result;
+              },
+              child: Container(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  makeRingToneString(ref, ref.watch(ringToneText)),
+                  style: const TextStyle(fontSize: 13),
                 ),
-                onPressed: () async {
-                  RingToneModel result =
-                      await Navigator.pushNamed(context, 'ring-tone')
-                          as RingToneModel;
-                  print(result.isCallWhenAlert);
-                  print(result.targetSound1);
-                  print(result.targetSound2);
-                }),
+              ),
+            ),
             const Spacer(),
             const Icon(
               Icons.chevron_right,
@@ -837,3 +865,5 @@ final snsTextEditControllers =
 final instantMsgTextEditControllers =
     StateProvider.autoDispose<List<TextEditingController>>(
         (ref) => [TextEditingController()]);
+
+final ringToneText = StateProvider<RingToneModel?>((ref) => null);

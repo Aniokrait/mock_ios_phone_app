@@ -1,7 +1,12 @@
 enum RingTone {
   opening,
   uplift,
-  kirameki,
+  kirameki;
+
+  @override
+  String toString() {
+    return name;
+  }
 }
 
 extension RingToneExt on RingTone {

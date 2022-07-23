@@ -1,4 +1,16 @@
-enum NotificationSound { aurora, complete, circle, synth, pulse, hello }
+enum NotificationSound {
+  aurora,
+  complete,
+  circle,
+  synth,
+  pulse,
+  hello;
+
+  @override
+  String toString() {
+    return name;
+  }
+}
 
 extension NotificationSoundExt on NotificationSound {
   String get name {
