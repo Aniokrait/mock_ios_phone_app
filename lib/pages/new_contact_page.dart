@@ -14,6 +14,7 @@ import '../data/date_type.dart';
 import '../data/email_type.dart';
 import '../data/instant_message_type.dart';
 import '../data/phone_type.dart';
+import '../data/relation_type.dart';
 import '../data/sns_type.dart';
 import '../data/url_type.dart';
 import '../model/ring_tone_model.dart';
@@ -100,7 +101,10 @@ class _ContactForm extends ConsumerWidget {
                   height: itemHeight,
                 ),
                 // 関係
-
+                _RelationField(),
+                SizedBox(
+                  height: itemHeight,
+                ),
                 // SNS
                 _SnsField(),
                 SizedBox(
@@ -779,6 +783,87 @@ class _DateField extends ConsumerWidget {
   }
 }
 
+class _RelationField extends ConsumerWidget {
+  const _RelationField({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    List<Widget> inputFields = ref
+        .watch(relationTypesProvider)
+        .mapIndexed(
+          (index, element) => Container(
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: lineColor),
+              ),
+            ),
+            child: SizedBox(
+              height: itemHeight,
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.remove_circle,
+                      color: Colors.red,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 0,
+                      minHeight: kMinInteractiveDimension,
+                    ),
+                    padding: const EdgeInsets.only(left: 0),
+                    onPressed: () {
+                      ref.read(relationTypesProvider.notifier).removeAt(index);
+                      ref.read(relationTypesProvider).removeAt(index);
+                    },
+                  ),
+                  Text(element.type.name),
+                  const Icon(Icons.chevron_right),
+                  Expanded(
+                    child: TextFormField(
+                      decoration: const InputDecoration(
+                          border: InputBorder.none, hintText: '関係と名前'),
+                      controller: ref.watch(relationTextEditControllers)[index],
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    padding: const EdgeInsets.fromLTRB(8, 8, 0, 8),
+                    alignment: Alignment.centerRight,
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.info_outline,
+                      color: Colors.blue,
+                    ),
+                  ),
+                  const Icon(
+                    Icons.chevron_right,
+                    color: Colors.black45,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        )
+        .toList();
+
+    return DecoratedContainer(
+      child: Column(
+        children: [
+          ...inputFields,
+          //関係と名前を追加行
+          AddLineRow(
+            title: '関係と名前を追加',
+            provider: relationTypesProvider,
+            labelValues: RelationType.values,
+            contactItem: ContactItem.relation,
+            textEditControllers: relationTextEditControllers,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _SnsField extends ConsumerWidget {
   const _SnsField({Key? key}) : super(key: key);
 
@@ -948,6 +1033,9 @@ final birthdayTextEditControllers =
     StateProvider.autoDispose<List<TextEditingController>>(
         (ref) => [TextEditingController()]);
 final dateTextEditControllers =
+    StateProvider.autoDispose<List<TextEditingController>>(
+        (ref) => [TextEditingController()]);
+final relationTextEditControllers =
     StateProvider.autoDispose<List<TextEditingController>>(
         (ref) => [TextEditingController()]);
 final snsTextEditControllers =

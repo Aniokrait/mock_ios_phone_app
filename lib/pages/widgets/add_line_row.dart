@@ -6,6 +6,7 @@ import 'package:mock_ios_phone_app/data/data_type.dart';
 import 'package:mock_ios_phone_app/data/date_type.dart';
 import 'package:mock_ios_phone_app/data/email_type.dart';
 import 'package:mock_ios_phone_app/data/instant_message_type.dart';
+import 'package:mock_ios_phone_app/data/relation_type.dart';
 import 'package:mock_ios_phone_app/data/sns_type.dart';
 import 'package:mock_ios_phone_app/data/url_type.dart';
 import '../../data/abst_state_notifier.dart';
@@ -61,13 +62,19 @@ class AddLineRow<E extends Enum> extends ConsumerWidget {
       case ContactItem.url:
         return UrlOfUrlType(type: targetType as UrlType, value: '');
       case ContactItem.birthday:
-        return DateOfBirthdayType(type: targetType as BirthdayType, value: DateTime.now());
+        return DateOfBirthdayType(
+            type: targetType as BirthdayType, value: DateTime.now());
       case ContactItem.date:
-        return DateOfDateType(type: targetType as DateType, value: DateTime.now());
+        return DateOfDateType(
+            type: targetType as DateType, value: DateTime.now());
+      case ContactItem.relation:
+        return RelationOfRelationType(
+            type: targetType as RelationType, value: '');
       case ContactItem.sns:
         return ProfileOfSnsType(type: targetType as SnsType, value: '');
       case ContactItem.instantMessage:
-        return MessageOfInstantMsgType(type: targetType as InstantMessageType, value: '');
+        return MessageOfInstantMsgType(
+            type: targetType as InstantMessageType, value: '');
       default:
         throw UnimplementedError();
     }
