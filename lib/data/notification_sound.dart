@@ -1,4 +1,6 @@
 enum NotificationSound {
+  nashi,
+  memo,
   aurora,
   complete,
   circle,
@@ -15,6 +17,10 @@ enum NotificationSound {
 extension NotificationSoundExt on NotificationSound {
   String get name {
     switch (this) {
+      case NotificationSound.nashi:
+        return 'なし';
+      case NotificationSound.memo:
+        return 'メモ';
       case NotificationSound.aurora:
         return 'オーロラ';
       case NotificationSound.complete:

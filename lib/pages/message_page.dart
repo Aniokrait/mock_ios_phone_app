@@ -1,41 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mock_ios_phone_app/data/notification_sound.dart';
 import 'package:mock_ios_phone_app/pages/widgets/custom_appbar.dart';
 import 'package:mock_ios_phone_app/pages/widgets/decorated_container.dart';
 import 'package:mock_ios_phone_app/pages/widgets/design_rules.dart';
 
+import '../data/notification_sound.dart';
 import '../data/ring_tone.dart';
 import '../model/ring_tone_model.dart';
 
-class RingTonePage extends ConsumerWidget {
-  const RingTonePage({Key? key}) : super(key: key);
+class MessagePage extends ConsumerWidget {
+  const MessagePage({Key? key}) : super(key: key);
 
   ///完了ボタン押下時のアクション
   void returnRingToneConfig(BuildContext context, Reader read) {
     var compositeList = [
       RingTone.opening,
+      ...NotificationSound.values,
       ...RingTone.values,
-      ...NotificationSound.values
     ];
-    bool isCall = read(isCallWhenAlert_Ringtone);
+    bool isCall = read(isCallWhenAlert_Message);
 
     RingToneModel result;
-    if (compositeList[read(selectedRingtone_Ringtone)] is RingTone) {
+    if (compositeList[read(selectedRingtone_Message)] is RingTone) {
       result = RingToneModel(
           targetSound1:
-              compositeList[read(selectedRingtone_Ringtone)] as RingTone,
+              compositeList[read(selectedRingtone_Message)] as RingTone,
           isCallWhenAlert: isCall);
     } else {
       result = RingToneModel(
-          targetSound2: compositeList[read(selectedRingtone_Ringtone)]
+          targetSound2: compositeList[read(selectedRingtone_Message)]
               as NotificationSound,
           isCallWhenAlert: isCall);
     }
 
     //デフォルトサウンドか？
-    result.isDefaultSound = read(selectedRingtone_Ringtone) == 0;
+    result.isDefaultSound = read(selectedRingtone_Message) == 0;
 
     Navigator.pop(
       context,
@@ -48,19 +47,19 @@ class RingTonePage extends ConsumerWidget {
     return Scaffold(
       appBar: CustomAppBar(
         leadingText: 'キャンセル',
-        mainTitle: '着信音',
+        mainTitle: 'メッセージ',
         trailingText: '完了',
         trailingAction: () {
           returnRingToneConfig(context, ref.read);
         },
       ),
-      body: const _RingToneForm(),
+      body: const _MessageForm(),
     );
   }
 }
 
-class _RingToneForm extends ConsumerWidget {
-  const _RingToneForm({Key? key}) : super(key: key);
+class _MessageForm extends ConsumerWidget {
+  const _MessageForm({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -74,10 +73,9 @@ class _RingToneForm extends ConsumerWidget {
                 const Text('緊急時は鳴らす'),
                 const Spacer(),
                 Switch.adaptive(
-                  value: ref.watch(isCallWhenAlert_Ringtone),
+                  value: ref.watch(isCallWhenAlert_Message),
                   onChanged: (bool newValue) {
-                    ref.read(isCallWhenAlert_Ringtone.notifier).state =
-                        newValue;
+                    ref.read(isCallWhenAlert_Message.notifier).state = newValue;
                   },
                 ),
               ],
@@ -125,11 +123,11 @@ class _RingToneForm extends ConsumerWidget {
               height: itemHeight,
               child: InkWell(
                 onTap: () {
-                  ref.read(selectedRingtone_Ringtone.notifier).state = 0;
+                  ref.read(selectedRingtone_Message.notifier).state = 0;
                 },
                 child: Row(
                   children: [
-                    ref.watch(selectedRingtone_Ringtone) == 0
+                    ref.watch(selectedRingtone_Message) == 0
                         ? const Icon(
                             Icons.check,
                             color: Colors.blue,
@@ -142,31 +140,6 @@ class _RingToneForm extends ConsumerWidget {
                   ],
                 ),
               ),
-            ),
-          ),
-
-          ///着信音
-          Container(
-            margin: const EdgeInsets.only(top: 18),
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.only(left: 10),
-            child: const Text(
-              '着信音',
-              style: TextStyle(fontSize: 12),
-            ),
-          ),
-          DecoratedContainer(
-            child: Column(
-              children: [
-                //for (RingTone e in RingTone.values) ...{
-                for (int i = 0; i < RingTone.values.length; i++) ...{
-                  _RingtoneRow(
-                    index: i,
-                    beforeArrayLength: 1,
-                    ringToneName: RingTone.values[i].name,
-                  ),
-                }
-              ],
             ),
           ),
 
@@ -186,8 +159,32 @@ class _RingToneForm extends ConsumerWidget {
                 for (int i = 0; i < NotificationSound.values.length; i++) ...{
                   _RingtoneRow(
                     index: i,
-                    beforeArrayLength: 1 + RingTone.values.length,
+                    beforeArrayLength: 1,
                     ringToneName: NotificationSound.values[i].name,
+                  ),
+                }
+              ],
+            ),
+          ),
+
+          ///着信音
+          Container(
+            margin: const EdgeInsets.only(top: 18),
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.only(left: 10),
+            child: const Text(
+              '着信音',
+              style: TextStyle(fontSize: 12),
+            ),
+          ),
+          DecoratedContainer(
+            child: Column(
+              children: [
+                for (int i = 0; i < RingTone.values.length; i++) ...{
+                  _RingtoneRow(
+                    index: i,
+                    beforeArrayLength: 1 + NotificationSound.values.length,
+                    ringToneName: RingTone.values[i].name,
                   ),
                 }
               ],
@@ -213,41 +210,54 @@ class _RingtoneRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    bool isNashiRow = index + beforeArrayLength == 1;
     return SizedBox(
       height: itemHeight,
       child: InkWell(
         onTap: () {
-          ref.read(selectedRingtone_Ringtone.notifier).state =
+          ref.read(selectedRingtone_Message.notifier).state =
               index + beforeArrayLength;
         },
-        child: Row(
-          children: [
-            ref.watch(selectedRingtone_Ringtone) == index + beforeArrayLength
-                ? const Icon(
-                    Icons.check,
-                    color: Colors.blue,
-                  )
-                : const SizedBox(width: 24),
-            const SizedBox(
-              width: 16,
-            ),
-            Expanded(
-              child: Container(
-                alignment: Alignment.centerLeft,
-                decoration: const BoxDecoration(
+        child: Container(
+          //通知音のなしの行だけ下線ボーダーをひく
+          decoration: isNashiRow
+              ? const BoxDecoration(
                   border: Border(
-                    bottom: BorderSide(color: lineColor),
+                    bottom: BorderSide(color: Colors.black38, width: 1.5),
                   ),
-                ),
-                child: Text(ringToneName),
+                )
+              : null,
+          child: Row(
+            children: [
+              ref.watch(selectedRingtone_Message) == index + beforeArrayLength
+                  ? const Icon(
+                      Icons.check,
+                      color: Colors.blue,
+                    )
+                  : const SizedBox(width: 24),
+              const SizedBox(
+                width: 16,
               ),
-            ),
-          ],
+              Expanded(
+                child: Container(
+                  alignment: Alignment.centerLeft,
+                  decoration: !isNashiRow
+                      ? const BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(color: lineColor),
+                          ),
+                        )
+                      : null,
+                  child: Text(ringToneName),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-final isCallWhenAlert_Ringtone = StateProvider<bool>((ref) => false);
-final selectedRingtone_Ringtone = StateProvider<int>((ref) => 0);
+final isCallWhenAlert_Message = StateProvider<bool>((ref) => false);
+final selectedRingtone_Message = StateProvider<int>((ref) => 0);

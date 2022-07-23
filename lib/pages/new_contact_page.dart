@@ -78,7 +78,10 @@ class _ContactForm extends ConsumerWidget {
                   height: itemHeight,
                 ),
                 // メッセージ
-
+                _MessageField(),
+                SizedBox(
+                  height: itemHeight,
+                ),
                 // URL
                 _UrlField(),
                 SizedBox(
@@ -398,6 +401,74 @@ class _RingTone extends ConsumerWidget {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   makeRingToneString(ref, ref.watch(ringToneText)),
+                  style: const TextStyle(fontSize: 13),
+                ),
+              ),
+            ),
+            const Spacer(),
+            const Icon(
+              Icons.chevron_right,
+              color: Colors.black45,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _MessageField extends ConsumerWidget {
+  const _MessageField({Key? key}) : super(key: key);
+
+  String makeMessageString(WidgetRef ref, RingToneModel? ringToneModel) {
+    //メッセージ画面で選択した音をresultに代入。初期表示時は「デフォルト」
+    String result = ref.watch(messageText)?.targetSound1?.toString() ??
+        ref.watch(messageText)?.targetSound2.toString() ??
+        'デフォルト';
+
+    //メッセージ画面でデフォルトを選んだときはRingToneModelがnullでないので改めてチェック
+    if (ringToneModel?.isDefaultSound ?? false) {
+      result = 'デフォルト';
+    }
+
+    //緊急時に鳴らすフラグが立っている場合、改行して「緊急時に鳴らす」も表示する
+    //ただしデフォルトの場合は、「デフォルト」を消し「緊急時に鳴らす」を改行なしで表示する
+    if (ringToneModel?.isCallWhenAlert ?? false) {
+      if (ringToneModel?.isDefaultSound ?? false) {
+        result = '緊急時に鳴らす';
+      } else {
+        result += '\n緊急時に鳴らす';
+      }
+    }
+
+    return result;
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    RingToneModel? result;
+
+    return DecoratedContainer(
+      child: SizedBox(
+        height: itemHeight,
+        child: Row(
+          children: [
+            const Text('メッセージ'),
+            const SizedBox(
+              width: 15,
+            ),
+            CupertinoButton(
+              padding: const EdgeInsets.symmetric(vertical: 0),
+              onPressed: () async {
+                result = await Navigator.pushNamed(context, 'message')
+                    as RingToneModel;
+
+                ref.read(messageText.notifier).state = result;
+              },
+              child: Container(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  makeMessageString(ref, ref.watch(messageText)),
                   style: const TextStyle(fontSize: 13),
                 ),
               ),
@@ -867,3 +938,4 @@ final instantMsgTextEditControllers =
         (ref) => [TextEditingController()]);
 
 final ringToneText = StateProvider<RingToneModel?>((ref) => null);
+final messageText = StateProvider<RingToneModel?>((ref) => null);

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mock_ios_phone_app/pages/message_page.dart';
 import 'package:mock_ios_phone_app/pages/new_contact_page.dart';
 import 'package:mock_ios_phone_app/pages/pages.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:mock_ios_phone_app/pages/ring_tone_page.dart';
-
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -32,6 +32,11 @@ class MyApp extends StatelessWidget {
           case 'ring-tone':
             return MaterialPageRoute(
               builder: (context) => const RingTonePage(),
+              fullscreenDialog: true,
+            );
+          case 'message':
+            return MaterialPageRoute(
+              builder: (context) => const MessagePage(),
               fullscreenDialog: true,
             );
         }
