@@ -112,7 +112,10 @@ class _ContactForm extends ConsumerWidget {
                   height: itemHeight,
                 ),
                 // メモ
-
+                _MemoField(),
+                SizedBox(
+                  height: itemHeight,
+                ),
                 // フィールドを追加
               ],
             ),
@@ -831,7 +834,7 @@ class _SnsField extends ConsumerWidget {
           ...inputFields,
           //SNSを追加行
           AddLineRow(
-            title: 'SNSを追加',
+            title: 'ソーシャルプロフィールを追加',
             provider: snsTypesProvider,
             labelValues: SnsType.values,
             contactItem: ContactItem.sns,
@@ -913,6 +916,24 @@ class _InstantMessageField extends ConsumerWidget {
   }
 }
 
+class _MemoField extends ConsumerWidget {
+  const _MemoField({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return DecoratedContainer(
+      child: TextFormField(
+        keyboardType: TextInputType.multiline,
+        maxLines: null,
+        decoration: const InputDecoration(
+          labelText: 'メモ',
+          border: UnderlineInputBorder(borderSide: BorderSide.none),
+        ),
+      ),
+    );
+  }
+}
+
 final phoneNumbersTextEditControllers =
     StateProvider.autoDispose<List<TextEditingController>>(
         (ref) => [TextEditingController(text: ref.read(inputPhoneNumber))]);
@@ -936,5 +957,5 @@ final instantMsgTextEditControllers =
     StateProvider.autoDispose<List<TextEditingController>>(
         (ref) => [TextEditingController()]);
 
-final ringToneText = StateProvider<RingToneModel?>((ref) => null);
-final messageText = StateProvider<RingToneModel?>((ref) => null);
+final ringToneText = StateProvider.autoDispose<RingToneModel?>((ref) => null);
+final messageText = StateProvider.autoDispose<RingToneModel?>((ref) => null);
