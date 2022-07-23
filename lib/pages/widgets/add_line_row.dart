@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mock_ios_phone_app/data/address_type.dart';
 import 'package:mock_ios_phone_app/data/birthday_type.dart';
 import 'package:mock_ios_phone_app/data/contact_item.dart';
 import 'package:mock_ios_phone_app/data/data_type.dart';
@@ -28,7 +29,7 @@ class AddLineRow<E extends Enum> extends ConsumerWidget {
   final AutoDisposeStateNotifierProvider<AbstStateNotifier, List> provider;
   final List<E> labelValues;
   final ContactItem contactItem;
-  final AutoDisposeStateProvider textEditControllers;
+  final List<AutoDisposeStateProvider> textEditControllers;
 
   void addLine<T>(Reader read) {
     var currentRows = read(provider.notifier);
@@ -50,7 +51,9 @@ class AddLineRow<E extends Enum> extends ConsumerWidget {
       currentRows.add(createDataType(labelValues[0]));
     }
 
-    read(textEditControllers.notifier).state.add(TextEditingController());
+    for (var controller in textEditControllers) {
+      read(controller.notifier).state.add(TextEditingController());
+    }
   }
 
   DataType createDataType(E targetType) {
@@ -61,6 +64,8 @@ class AddLineRow<E extends Enum> extends ConsumerWidget {
         return AddressOfEmailType(type: targetType as EmailType, value: '');
       case ContactItem.url:
         return UrlOfUrlType(type: targetType as UrlType, value: '');
+      case ContactItem.address:
+        return DetailsOfAddressType(type: targetType as AddressType);
       case ContactItem.birthday:
         return DateOfBirthdayType(
             type: targetType as BirthdayType, value: DateTime.now());

@@ -9,6 +9,7 @@ import 'package:mock_ios_phone_app/pages/widgets/decorated_text_form_field.dart'
 import 'package:mock_ios_phone_app/pages/widgets/design_rules.dart';
 import 'package:collection/collection.dart';
 
+import '../data/address_type.dart';
 import '../data/birthday_type.dart';
 import '../data/date_type.dart';
 import '../data/email_type.dart';
@@ -89,7 +90,10 @@ class _ContactForm extends ConsumerWidget {
                   height: itemHeight,
                 ),
                 // 住所
-
+                _AddressField(),
+                SizedBox(
+                  height: itemHeight,
+                ),
                 // 誕生日
                 _BirthdayField(),
                 SizedBox(
@@ -279,7 +283,7 @@ class _PhoneNumbersField extends ConsumerWidget {
             provider: phoneTypesProvider,
             labelValues: PhoneType.values,
             contactItem: ContactItem.phone,
-            textEditControllers: phoneNumbersTextEditControllers,
+            textEditControllers: [phoneNumbersTextEditControllers],
           ),
         ],
       ),
@@ -348,7 +352,7 @@ class _EmailField extends ConsumerWidget {
             provider: emailTypesProvider,
             labelValues: EmailType.values,
             contactItem: ContactItem.email,
-            textEditControllers: emailTextEditControllers,
+            textEditControllers: [emailTextEditControllers],
           ),
         ],
       ),
@@ -551,7 +555,138 @@ class _UrlField extends ConsumerWidget {
             provider: urlTypesProvider,
             labelValues: UrlType.values,
             contactItem: ContactItem.url,
-            textEditControllers: urlTextEditControllers,
+            textEditControllers: [urlTextEditControllers],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AddressField extends ConsumerWidget {
+  const _AddressField({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    List<Widget> inputFields = ref
+        .watch(addressTypesProvider)
+        .mapIndexed(
+          (index, element) => Container(
+            decoration: const BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: lineColor),
+              ),
+            ),
+            child: SizedBox(
+              height: itemHeight * 5,
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.remove_circle,
+                      color: Colors.red,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 0,
+                      minHeight: kMinInteractiveDimension,
+                    ),
+                    padding: const EdgeInsets.only(left: 0),
+                    onPressed: () {
+                      ref.read(addressTypesProvider.notifier).removeAt(index);
+                      ref.read(postalNumberTextEditControllers).removeAt(index);
+                      ref.read(prefectureTextEditControllers).removeAt(index);
+                      ref.read(cityTextEditControllers).removeAt(index);
+                      ref.read(address1TextEditControllers).removeAt(index);
+                      ref.read(address2TextEditControllers).removeAt(index);
+                      ref.read(countryTextEditControllers).removeAt(index);
+                    },
+                  ),
+                  Text(element.type.name),
+                  const Icon(Icons.chevron_right),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            decoration: const InputDecoration(
+                                border: InputBorder.none, hintText: '郵便番号'),
+                            controller: ref
+                                .watch(postalNumberTextEditControllers)[index],
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                decoration: const InputDecoration(
+                                    border: InputBorder.none, hintText: '都道府県'),
+                                controller: ref.watch(
+                                    prefectureTextEditControllers)[index],
+                              ),
+                            ),
+                            Expanded(
+                              child: TextFormField(
+                                decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: '郡/市区町村'),
+                                controller:
+                                    ref.watch(cityTextEditControllers)[index],
+                              ),
+                            ),
+                          ],
+                        ),
+                        Expanded(
+                          child: TextFormField(
+                            decoration: const InputDecoration(
+                                border: InputBorder.none, hintText: '以降の住所'),
+                            controller:
+                                ref.watch(address1TextEditControllers)[index],
+                          ),
+                        ),
+                        Expanded(
+                          child: TextFormField(
+                            decoration: const InputDecoration(
+                                border: InputBorder.none, hintText: '以降の住所'),
+                            controller:
+                                ref.watch(address2TextEditControllers)[index],
+                          ),
+                        ),
+                        Expanded(
+                          child: TextFormField(
+                            decoration: const InputDecoration(
+                                border: InputBorder.none, hintText: '日本'),
+                            controller:
+                                ref.watch(countryTextEditControllers)[index],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        )
+        .toList();
+
+    return DecoratedContainer(
+      child: Column(
+        children: [
+          ...inputFields,
+          //住所を追加行
+          AddLineRow(
+            title: '住所を追加',
+            provider: addressTypesProvider,
+            labelValues: AddressType.values,
+            contactItem: ContactItem.address,
+            textEditControllers: [
+              postalNumberTextEditControllers,
+              prefectureTextEditControllers,
+              cityTextEditControllers,
+              address1TextEditControllers,
+              address2TextEditControllers,
+              countryTextEditControllers
+            ],
           ),
         ],
       ),
@@ -673,7 +808,7 @@ class _BirthdayField extends ConsumerWidget {
               provider: birthdayTypesProvider,
               labelValues: BirthdayType.values,
               contactItem: ContactItem.birthday,
-              textEditControllers: birthdayTextEditControllers,
+              textEditControllers: [birthdayTextEditControllers],
             ),
         ],
       ),
@@ -775,7 +910,7 @@ class _DateField extends ConsumerWidget {
             provider: dateTypesProvider,
             labelValues: DateType.values,
             contactItem: ContactItem.date,
-            textEditControllers: dateTextEditControllers,
+            textEditControllers: [dateTextEditControllers],
           ),
         ],
       ),
@@ -856,7 +991,7 @@ class _RelationField extends ConsumerWidget {
             provider: relationTypesProvider,
             labelValues: RelationType.values,
             contactItem: ContactItem.relation,
-            textEditControllers: relationTextEditControllers,
+            textEditControllers: [relationTextEditControllers],
           ),
         ],
       ),
@@ -923,7 +1058,7 @@ class _SnsField extends ConsumerWidget {
             provider: snsTypesProvider,
             labelValues: SnsType.values,
             contactItem: ContactItem.sns,
-            textEditControllers: snsTextEditControllers,
+            textEditControllers: [snsTextEditControllers],
           ),
         ],
       ),
@@ -993,7 +1128,7 @@ class _InstantMessageField extends ConsumerWidget {
             provider: instantMessageTypesProvider,
             labelValues: InstantMessageType.values,
             contactItem: ContactItem.instantMessage,
-            textEditControllers: instantMsgTextEditControllers,
+            textEditControllers: [instantMsgTextEditControllers],
           ),
         ],
       ),
@@ -1026,6 +1161,24 @@ final emailTextEditControllers =
     StateProvider.autoDispose<List<TextEditingController>>(
         (ref) => [TextEditingController()]);
 final urlTextEditControllers =
+    StateProvider.autoDispose<List<TextEditingController>>(
+        (ref) => [TextEditingController()]);
+final postalNumberTextEditControllers =
+    StateProvider.autoDispose<List<TextEditingController>>(
+        (ref) => [TextEditingController()]);
+final prefectureTextEditControllers =
+    StateProvider.autoDispose<List<TextEditingController>>(
+        (ref) => [TextEditingController()]);
+final cityTextEditControllers =
+    StateProvider.autoDispose<List<TextEditingController>>(
+        (ref) => [TextEditingController()]);
+final address1TextEditControllers =
+    StateProvider.autoDispose<List<TextEditingController>>(
+        (ref) => [TextEditingController()]);
+final address2TextEditControllers =
+    StateProvider.autoDispose<List<TextEditingController>>(
+        (ref) => [TextEditingController()]);
+final countryTextEditControllers =
     StateProvider.autoDispose<List<TextEditingController>>(
         (ref) => [TextEditingController()]);
 // TODO 密結合したせいで消せなくなった。
